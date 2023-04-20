@@ -10,6 +10,11 @@
       "StackName": "amplify-projectmanagement-dev-134615",
       "StackId": "arn:aws:cloudformation:eu-north-1:151407415172:stack/amplify-projectmanagement-dev-134615/94787af0-df68-11ed-92be-0a1b9e148482",
       "AmplifyAppId": "d1gfbrjjf28moe"
+    },
+    "categories": {
+      "auth": {
+        "Authentication": {}
+      }
     }
   }
 }
