@@ -1,15 +1,35 @@
-import logo from "./logo.svg";
 import "@aws-amplify/ui-react/styles.css";
-import { withAuthenticator, Button, Heading, Image, View, Card } from "@aws-amplify/ui-react";
+import { withAuthenticator, View } from "@aws-amplify/ui-react";
+import { Box, Button, Divider, Typography } from "@mui/material";
 
-function App({ signOut }: { signOut: () => void }) {
+import logo from "./images/logo.png";
+import Projects from "./components/Projects/Projects";
+
+function App({ signOut }: { signOut?: () => void }) {
 	return (
 		<View className="App">
-			<Card>
-				<Image src={logo} className="App-logo" alt="logo" />
-				<Heading level={1}>We now have Auth!</Heading>
-			</Card>
-			<Button onClick={signOut}>Sign Out</Button>
+			<Box
+				sx={{
+					display: "flex",
+					justifyContent: "space-between",
+					alignItems: "center",
+					padding: "20px 30px",
+					margin: "0",
+				}}>
+				<Box sx={{ display: "flex", alignItems: "center", columnGap: "20px" }}>
+					<img src={logo} alt="Logo" width={48} />
+					<Typography variant="h4" component="h1" fontWeight={500}>
+						Project Management
+					</Typography>
+				</Box>
+				<Button variant="outlined" size="large" onClick={signOut}>
+					Вихід
+				</Button>
+			</Box>
+			<Divider />
+			<Box>
+				<Projects />
+			</Box>
 		</View>
 	);
 }
