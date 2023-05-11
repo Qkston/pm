@@ -1,0 +1,46 @@
+type Project @model @auth(rules: [{ allow: public }]) {
+	id: ID!
+	name: String!
+	description: String
+	start_date: AWSDate!
+	finish_date: AWSDate
+}
+
+type User @model @auth(rules: [{ allow: public }]) {
+	id: ID!
+	first_name: String!
+	last_name: String!
+	email: String!
+	password: String!
+	project_ids: [ID!]
+}
+
+type Task @model @auth(rules: [{ allow: public }]) {
+	id: ID!
+	title: String!
+	description: String
+	status: String!
+	create_date: AWSDate!
+	deadline: AWSDate!
+	project_id: ID! @index(name: "byProject")
+	user_id: ID @index(name: "byUser")
+}
+
+type TimeEntry @model @auth(rules: [{ allow: public }]) {
+	id: ID!
+	task_id: ID! @index(name: "byTask")
+	user_id: ID! @index(name: "byUser")
+	start: AWSDateTime!
+	end: AWSDateTime
+}
+
+type Report @model @auth(rules: [{ allow: public }]) {
+	id: ID!
+	description: String
+	duration: Int!
+	start: AWSDate!
+	end: AWSDate
+	project_id: ID! @index(name: "byProject")
+	task_id: ID @index(name: "byTask")
+	user_id: ID @index(name: "byUser")
+}
