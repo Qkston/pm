@@ -13,7 +13,8 @@
     },
     "categories": {
       "auth": {
-        "Authentication": {}
+        "Authentication": {},
+        "projectmanagement5da94eb4": {}
       }
     }
   }
