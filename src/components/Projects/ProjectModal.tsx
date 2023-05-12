@@ -3,13 +3,14 @@ import { useEffect, useState } from "react";
 import { Modal, Box, Typography, TextField, Button } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 
-import { CreateProjectInput, Project } from "../../API";
+import { CreateProjectInput, Project, UpdateProjectInput } from "../../API";
 
 type Props = {
 	opened: boolean;
 	project?: Project;
 	onClose: () => void;
 	onCreate: (project: CreateProjectInput) => void;
+	onUpdate: (data: UpdateProjectInput) => void;
 };
 
 const style = {
@@ -17,13 +18,13 @@ const style = {
 	top: "50%",
 	left: "50%",
 	transform: "translate(-50%, -50%)",
-	width: "400px",
+	width: "650px",
 	bgcolor: "background.paper",
 	boxShadow: 14,
 	p: 3,
 };
 
-export default function ProjectModal({ opened, project, onClose, onCreate }: Props) {
+export default function ProjectModal({ opened, project, onClose, onCreate, onUpdate }: Props) {
 	const [title, setTitle] = useState<string>("");
 	const [description, setDescription] = useState<string>("");
 	const [finishDate, setFinishDate] = useState<moment.Moment | null>(null);
@@ -36,6 +37,16 @@ export default function ProjectModal({ opened, project, onClose, onCreate }: Pro
 		}
 	}, [opened]);
 
+	useEffect(() => {
+		if (project) {
+			const { name, description, finish_date } = project;
+
+			setTitle(name);
+			setDescription(description || "");
+			setFinishDate(finish_date ? moment(finish_date) : null);
+		}
+	}, [project]);
+
 	const onCreateProject = () => {
 		// TODO: Add owner_id
 		const data: CreateProjectInput = {
@@ -46,6 +57,19 @@ export default function ProjectModal({ opened, project, onClose, onCreate }: Pro
 		};
 
 		onCreate(data);
+		onClose();
+	};
+
+	const onUpdateProject = () => {
+		if (!project) return;
+		const data: UpdateProjectInput = {
+			id: project?.id,
+			name: title,
+			description,
+			finish_date: finishDate ? moment(finishDate).format("YYYY-MM-DD") : null,
+		};
+
+		onUpdate(data);
 		onClose();
 	};
 
@@ -63,12 +87,13 @@ export default function ProjectModal({ opened, project, onClose, onCreate }: Pro
 						label="Опис"
 						variant="standard"
 						multiline
+						maxRows={5}
 					/>
 					<DatePicker value={finishDate} onChange={setFinishDate} label="Дата завершення" sx={{ mt: "15px" }} minDate={moment().add(1, "d")} />
 				</Box>
 				<Box sx={{ mt: "30px", display: "flex", justifyContent: "space-around" }}>
-					<Button variant="contained" size="medium" onClick={onCreateProject}>
-						{project ? "Створити" : "Зберегти"}
+					<Button variant="contained" size="medium" onClick={() => (project ? onUpdateProject() : onCreateProject())}>
+						{project ? "Зберегти" : "Створити"}
 					</Button>
 					<Button variant="outlined" size="medium" onClick={onClose}>
 						Скасувати
