@@ -47,7 +47,9 @@ export default function Dashboard({ project, onClose }: Props) {
 				const emails = filteredUsers
 					.map(({ Attributes }) => {
 						if (!Attributes?.length) return false;
-						return Attributes.find(({ Name }) => Name === "email")?.Value;
+						const email = Attributes.find(({ Name }) => Name === "email")?.Value;
+						const isManager = Attributes.find(({ Name }) => Name === "sub")?.Value === project.manager_id;
+						return `${email}${isManager ? "(manager)" : ""}`;
 					})
 					.filter(Boolean);
 
@@ -134,16 +136,18 @@ export default function Dashboard({ project, onClose }: Props) {
 						</Box>
 					</Box>
 					<List sx={{ width: "100%", mt: "20px" }}>
-						{userEmails.map(email => (
-							<ParticipantListItem
-								key={email}
-								email={email}
-								removeParticipant={async (email: string) => {
-									const cognitoID = await getCognitoIDByEmail(email);
-									if (cognitoID) removeParticipant(cognitoID);
-								}}
-							/>
-						))}
+						{userEmails
+							.sort((a, b) => a.localeCompare(b))
+							.map(email => (
+								<ParticipantListItem
+									key={email}
+									email={email}
+									removeParticipant={async (email: string) => {
+										const cognitoID = await getCognitoIDByEmail(email);
+										if (cognitoID) removeParticipant(cognitoID);
+									}}
+								/>
+							))}
 					</List>
 				</Box>
 			</DialogContent>
