@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
+import { CognitoIdentityServiceProvider, config } from "aws-sdk";
 import { Dialog, DialogTitle, DialogContent, AppBar, IconButton, Toolbar, Box, Button, List, TextField } from "@mui/material";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import CloseIcon from "@mui/icons-material/Close";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
-import { CognitoIdentityServiceProvider, config } from "aws-sdk";
 
 import ParticipantListItem from "./ParticipantListItem";
+import TaskModal from "../../Tasks/TaskModal";
 
 import { Project } from "../../../API";
 import { updateProjectParticipants } from "../../../services/ProjectService";
+import { createTaskRecord } from "../../../services/TaskService";
 
 type Props = {
 	project: Project;
@@ -17,6 +19,7 @@ type Props = {
 
 export default function Dashboard({ project, onClose }: Props) {
 	const [openAddUserInput, setOpenAddUserInputStatus] = useState<boolean>(false);
+	const [openCreateTaskModal, setOpenCreateTaskModalStatus] = useState<boolean>(false);
 
 	const [email, setEmail] = useState<string>("");
 	const [userEmails, setUserEmails] = useState<string[]>([]);
@@ -86,71 +89,88 @@ export default function Dashboard({ project, onClose }: Props) {
 	};
 
 	return (
-		<Dialog fullScreen open sx={{ mt: "88px" }} BackdropProps={{ style: { display: "none" } }}>
-			<AppBar sx={{ position: "relative" }}>
-				<Toolbar sx={{ display: "flex", alignItems: "center" }}>
-					<IconButton color="inherit" onClick={onClose}>
-						<ArrowBackIosNewIcon />
-					</IconButton>
-					<DialogTitle>{project.name}</DialogTitle>
-				</Toolbar>
-			</AppBar>
-			<DialogContent sx={{ display: "flex", p: 0 }}>
-				<Box sx={{ flex: 4, borderRight: "2px solid #eeeeee" }}></Box>
-				<Box sx={{ flex: 1, p: "20px", boxSizing: "border-box" }}>
-					<Button
-						variant="outlined"
-						size="large"
-						sx={{ display: openAddUserInput ? "none" : "block", m: "0 auto", height: "50px" }}
-						onClick={() => setOpenAddUserInputStatus(true)}>
-						Додати учасника
-					</Button>
-					<Box
-						sx={{
-							display: openAddUserInput ? "flex" : "none",
-							alignItems: "center",
-							columnGap: "10px",
-						}}>
-						<TextField
-							value={email}
-							onChange={(event: any) => setEmail(event.target.value)}
-							sx={{ flex: 3.5 }}
-							placeholder="Електронна пошта користувача"
-							variant="outlined"
-						/>
-						<Box sx={{ flex: 1 }}>
-							<IconButton
-								onClick={async () => {
-									const cognitoID = await getCognitoIDByEmail(email);
-									if (cognitoID) addNewParticipant(cognitoID);
-								}}>
-								<AddOutlinedIcon />
-							</IconButton>
-							<IconButton
-								onClick={() => {
-									setOpenAddUserInputStatus(false);
-									setEmail("");
-								}}>
-								<CloseIcon />
-							</IconButton>
-						</Box>
+		<>
+			<Dialog fullScreen open sx={{ mt: "88px" }} BackdropProps={{ style: { display: "none" } }}>
+				<AppBar sx={{ position: "relative" }}>
+					<Toolbar sx={{ display: "flex", alignItems: "center" }}>
+						<IconButton color="inherit" onClick={onClose}>
+							<ArrowBackIosNewIcon />
+						</IconButton>
+						<DialogTitle>{project.name}</DialogTitle>
+					</Toolbar>
+				</AppBar>
+				<DialogContent sx={{ display: "flex", p: 0 }}>
+					<Box sx={{ flex: 4, borderRight: "2px solid #eeeeee", p: "20px", boxSizing: "border-box" }}>
+						<Button variant="outlined" size="large" onClick={() => setOpenCreateTaskModalStatus(true)}>
+							Створити завдання
+						</Button>
 					</Box>
-					<List sx={{ width: "100%", mt: "20px" }}>
-						{userEmails
-							.sort((a, b) => a.localeCompare(b))
-							.map(email => (
-								<ParticipantListItem
-									key={email}
-									email={email}
-									removeParticipant={async (email: string) => {
+					<Box sx={{ flex: 1, p: "20px", boxSizing: "border-box" }}>
+						<Button
+							variant="outlined"
+							size="large"
+							sx={{ display: openAddUserInput ? "none" : "block", m: "0 auto", height: "50px" }}
+							onClick={() => setOpenAddUserInputStatus(true)}>
+							Додати учасника
+						</Button>
+						<Box
+							sx={{
+								display: openAddUserInput ? "flex" : "none",
+								alignItems: "center",
+								columnGap: "10px",
+							}}>
+							<TextField
+								value={email}
+								onChange={(event: any) => setEmail(event.target.value)}
+								sx={{ flex: 3 }}
+								placeholder="Електронна пошта користувача"
+								variant="outlined"
+							/>
+							<Box sx={{ flex: 1 }}>
+								<IconButton
+									onClick={async () => {
 										const cognitoID = await getCognitoIDByEmail(email);
-										if (cognitoID) removeParticipant(cognitoID);
-									}}
-								/>
-							))}
-					</List>
-				</Box>
-			</DialogContent>
-		</Dialog>
+										if (cognitoID) addNewParticipant(cognitoID);
+									}}>
+									<AddOutlinedIcon />
+								</IconButton>
+								<IconButton
+									onClick={() => {
+										setOpenAddUserInputStatus(false);
+										setEmail("");
+									}}>
+									<CloseIcon />
+								</IconButton>
+							</Box>
+						</Box>
+						<List sx={{ width: "100%", mt: "20px" }}>
+							{userEmails
+								.sort((a, b) => a.localeCompare(b))
+								.map(email => (
+									<ParticipantListItem
+										key={email}
+										email={email}
+										removeParticipant={async (email: string) => {
+											const cognitoID = await getCognitoIDByEmail(email);
+											if (cognitoID) removeParticipant(cognitoID);
+										}}
+									/>
+								))}
+						</List>
+					</Box>
+				</DialogContent>
+			</Dialog>
+			<TaskModal
+				opened={openCreateTaskModal}
+				projectID={project.id}
+				userEmails={userEmails}
+				onClose={() => setOpenCreateTaskModalStatus(false)}
+				onCreate={async data => {
+					const cognitoID = await getCognitoIDByEmail(data.user_id || "");
+					const updatedData = { ...data, user_id: cognitoID };
+					createTaskRecord(updatedData);
+				}}
+			/>
+		</>
 	);
 }
