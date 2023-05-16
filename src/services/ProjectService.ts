@@ -25,3 +25,12 @@ export const deleteProjectRecord = async (data: DeleteProjectInput) => {
 		return error;
 	}
 };
+
+export const updateProjectParticipants = async (id: string, participantIDs: string[], _version: number) => {
+	try {
+		const data: UpdateProjectInput = { id, participant_ids: participantIDs, _version };
+		return await API.graphql(graphqlOperation(updateProject, { input: data }));
+	} catch (error) {
+		return error;
+	}
+};

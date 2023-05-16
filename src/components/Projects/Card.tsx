@@ -9,16 +9,32 @@ type Props = {
 	setSelectedProject: (project: Project) => void;
 	setOpenProjectModal: (open: boolean) => void;
 	setOpenConfirmProjectDelete: (open: boolean) => void;
+	setOpenProjectDashboard: (open: boolean) => void;
 };
 
-export default function ProjectCard({ project, setSelectedProject, setOpenProjectModal, setOpenConfirmProjectDelete }: Props) {
+export default function ProjectCard({
+	project,
+	setSelectedProject,
+	setOpenProjectModal,
+	setOpenConfirmProjectDelete,
+	setOpenProjectDashboard,
+}: Props) {
 	const [menuElement, setMenuElement] = useState<null | HTMLElement>(null);
 
 	const openMenu = (event: React.MouseEvent<HTMLElement>) => setMenuElement(event.currentTarget);
 	const closeMenu = () => setMenuElement(null);
 
 	return (
-		<Card key={project.id} sx={{ width: 375, height: 200, cursor: "pointer" }} onClick={() => setSelectedProject(project)}>
+		<Card
+			key={project.id}
+			sx={{ width: 375, height: 200, cursor: "pointer" }}
+			onClick={() => {
+				window.scrollTo({ top: 0, behavior: "smooth" });
+				setTimeout(() => {
+					setSelectedProject(project);
+					setOpenProjectDashboard(true);
+				}, 200);
+			}}>
 			<CardContent>
 				<Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
 					<Typography variant="h5" component="h3" sx={{ pb: "5px" }}>
@@ -40,14 +56,18 @@ export default function ProjectCard({ project, setSelectedProject, setOpenProjec
 								closeMenu();
 							}}>
 							<MenuItem
-								onClick={() => {
+								onClick={(event: any) => {
+									event.stopPropagation();
+									setSelectedProject(project);
 									closeMenu();
 									setOpenProjectModal(true);
 								}}>
 								Відредагувати
 							</MenuItem>
 							<MenuItem
-								onClick={() => {
+								onClick={(event: any) => {
+									event.stopPropagation();
+									setSelectedProject(project);
 									closeMenu();
 									setOpenConfirmProjectDelete(true);
 								}}

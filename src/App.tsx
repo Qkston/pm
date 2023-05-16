@@ -26,7 +26,7 @@ function App({ signOut }: { signOut?: () => void }) {
 	}, []);
 
 	return (
-		<View className="App">
+		<View>
 			<Box
 				sx={{
 					display: "flex",
@@ -38,7 +38,7 @@ function App({ signOut }: { signOut?: () => void }) {
 				<Box sx={{ display: "flex", alignItems: "center", columnGap: "20px" }}>
 					<img src={logo} alt="Logo" width={48} />
 					<Typography variant="h4" component="h1" fontWeight={500}>
-						Task Tracker: Project Task Management with Time Tracking
+						Task Tracker: Project Management with Time Tracking
 					</Typography>
 				</Box>
 				<Button variant="outlined" size="large" onClick={signOut}>

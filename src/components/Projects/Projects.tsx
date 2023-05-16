@@ -1,8 +1,9 @@
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import ProjectModal from "./ProjectModal";
-import ProjectCard from "./Project";
+import ProjectCard from "./Card";
+import Dashboard from "./Dashboard/Dashboard";
 
 import ProjectsSubscription from "../../subscriptions/ProjectSubscription";
 
@@ -17,8 +18,13 @@ export default function Projects() {
 
 	const [openProjectModal, setOpenProjectModal] = useState<boolean>(false);
 	const [openConfirmProjectDelete, setOpenConfirmProjectDelete] = useState<boolean>(false);
+	const [openProjectDashboard, setOpenProjectDashboard] = useState<boolean>(false);
 
 	const [selectedProject, setSelectedProject] = useState<Project>();
+
+	useEffect(() => {
+		setSelectedProject(projects.find(p => p.id === selectedProject?.id && !p._deleted));
+	}, [projects]);
 
 	return (
 		<>
@@ -43,6 +49,7 @@ export default function Projects() {
 								setSelectedProject={setSelectedProject}
 								setOpenProjectModal={setOpenProjectModal}
 								setOpenConfirmProjectDelete={setOpenConfirmProjectDelete}
+								setOpenProjectDashboard={setOpenProjectDashboard}
 							/>
 						))}
 				</Box>
@@ -54,6 +61,7 @@ export default function Projects() {
 				onCreate={createProjectRecord}
 				onUpdate={updateProjectRecord}
 			/>
+			{openProjectDashboard && selectedProject && <Dashboard project={selectedProject} onClose={() => setOpenProjectDashboard(false)} />}
 			<Dialog
 				open={openConfirmProjectDelete}
 				onClose={() => setOpenConfirmProjectDelete(false)}
