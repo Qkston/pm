@@ -13,8 +13,13 @@ export const createProject = /* GraphQL */ `
       description
       start_date
       finish_date
+      manager_id
+      participant_ids
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -29,8 +34,13 @@ export const updateProject = /* GraphQL */ `
       description
       start_date
       finish_date
+      manager_id
+      participant_ids
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -45,8 +55,13 @@ export const deleteProject = /* GraphQL */ `
       description
       start_date
       finish_date
+      manager_id
+      participant_ids
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -60,10 +75,11 @@ export const createUser = /* GraphQL */ `
       first_name
       last_name
       email
-      password
-      project_ids
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -77,10 +93,11 @@ export const updateUser = /* GraphQL */ `
       first_name
       last_name
       email
-      password
-      project_ids
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -94,10 +111,11 @@ export const deleteUser = /* GraphQL */ `
       first_name
       last_name
       email
-      password
-      project_ids
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -117,6 +135,9 @@ export const createTask = /* GraphQL */ `
       user_id
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -136,6 +157,9 @@ export const updateTask = /* GraphQL */ `
       user_id
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -155,6 +179,9 @@ export const deleteTask = /* GraphQL */ `
       user_id
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -171,6 +198,9 @@ export const createTimeEntry = /* GraphQL */ `
       end
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -187,6 +217,9 @@ export const updateTimeEntry = /* GraphQL */ `
       end
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -203,6 +236,63 @@ export const deleteTimeEntry = /* GraphQL */ `
       end
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const createComment = /* GraphQL */ `
+  mutation CreateComment(
+    $input: CreateCommentInput!
+    $condition: ModelCommentConditionInput
+  ) {
+    createComment(input: $input, condition: $condition) {
+      id
+      task_id
+      user_id
+      text
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const updateComment = /* GraphQL */ `
+  mutation UpdateComment(
+    $input: UpdateCommentInput!
+    $condition: ModelCommentConditionInput
+  ) {
+    updateComment(input: $input, condition: $condition) {
+      id
+      task_id
+      user_id
+      text
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const deleteComment = /* GraphQL */ `
+  mutation DeleteComment(
+    $input: DeleteCommentInput!
+    $condition: ModelCommentConditionInput
+  ) {
+    deleteComment(input: $input, condition: $condition) {
+      id
+      task_id
+      user_id
+      text
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -222,6 +312,9 @@ export const createReport = /* GraphQL */ `
       user_id
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -241,6 +334,9 @@ export const updateReport = /* GraphQL */ `
       user_id
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -260,6 +356,9 @@ export const deleteReport = /* GraphQL */ `
       user_id
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;

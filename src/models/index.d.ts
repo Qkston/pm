@@ -16,6 +16,8 @@ type EagerProject = {
   readonly description?: string | null;
   readonly start_date: string;
   readonly finish_date?: string | null;
+  readonly manager_id: string;
+  readonly participant_ids?: (string | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -30,6 +32,8 @@ type LazyProject = {
   readonly description?: string | null;
   readonly start_date: string;
   readonly finish_date?: string | null;
+  readonly manager_id: string;
+  readonly participant_ids?: (string | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -49,8 +53,6 @@ type EagerUser = {
   readonly first_name: string;
   readonly last_name: string;
   readonly email: string;
-  readonly password: string;
-  readonly project_ids?: string[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -64,8 +66,6 @@ type LazyUser = {
   readonly first_name: string;
   readonly last_name: string;
   readonly email: string;
-  readonly password: string;
-  readonly project_ids?: string[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -148,6 +148,38 @@ export declare type TimeEntry = LazyLoading extends LazyLoadingDisabled ? EagerT
 
 export declare const TimeEntry: (new (init: ModelInit<TimeEntry>) => TimeEntry) & {
   copyOf(source: TimeEntry, mutator: (draft: MutableModel<TimeEntry>) => MutableModel<TimeEntry> | void): TimeEntry;
+}
+
+type EagerComment = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Comment, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly task_id: string;
+  readonly user_id: string;
+  readonly text: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyComment = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Comment, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly task_id: string;
+  readonly user_id: string;
+  readonly text: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type Comment = LazyLoading extends LazyLoadingDisabled ? EagerComment : LazyComment
+
+export declare const Comment: (new (init: ModelInit<Comment>) => Comment) & {
+  copyOf(source: Comment, mutator: (draft: MutableModel<Comment>) => MutableModel<Comment> | void): Comment;
 }
 
 type EagerReport = {

@@ -8,8 +8,11 @@ import ProjectsSubscription from "../../subscriptions/ProjectSubscription";
 
 import { Project } from "../../API";
 import { createProjectRecord, deleteProjectRecord, updateProjectRecord } from "../../services/ProjectService";
+import { useUserContext } from "../../contexts/UserContext";
 
 export default function Projects() {
+	const { userID } = useUserContext();
+
 	const projects: Project[] = ProjectsSubscription();
 
 	const [openProjectModal, setOpenProjectModal] = useState<boolean>(false);
@@ -20,14 +23,22 @@ export default function Projects() {
 	return (
 		<>
 			<Box sx={{ padding: "40px" }}>
-				<Button variant="contained" size="large" onClick={() => setOpenProjectModal(true)}>
+				<Button
+					variant="contained"
+					size="large"
+					onClick={() => {
+						setSelectedProject(undefined);
+						setOpenProjectModal(true);
+					}}>
 					Створити проект
 				</Button>
 				<Box sx={{ padding: "40px 0", display: "flex", flexWrap: "wrap", columnGap: "30px", rowGap: "30px" }}>
 					{projects
 						.sort((a, b) => a.name.localeCompare(b.name))
+						.filter(p => (p.manager_id === userID || p.participant_ids?.some(id => id === userID)) && !p._deleted)
 						.map(p => (
 							<ProjectCard
+								key={p.id}
 								project={p}
 								setSelectedProject={setSelectedProject}
 								setOpenProjectModal={setOpenProjectModal}
@@ -58,7 +69,8 @@ export default function Projects() {
 					<Button
 						onClick={() => {
 							if (!selectedProject) return;
-							deleteProjectRecord({ id: selectedProject.id });
+							const { id, _version } = selectedProject;
+							deleteProjectRecord({ id, _version });
 							setOpenConfirmProjectDelete(false);
 						}}
 						variant="contained"

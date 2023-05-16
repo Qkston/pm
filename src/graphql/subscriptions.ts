@@ -10,8 +10,13 @@ export const onCreateProject = /* GraphQL */ `
       description
       start_date
       finish_date
+      manager_id
+      participant_ids
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -23,8 +28,13 @@ export const onUpdateProject = /* GraphQL */ `
       description
       start_date
       finish_date
+      manager_id
+      participant_ids
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -36,8 +46,13 @@ export const onDeleteProject = /* GraphQL */ `
       description
       start_date
       finish_date
+      manager_id
+      participant_ids
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -48,10 +63,11 @@ export const onCreateUser = /* GraphQL */ `
       first_name
       last_name
       email
-      password
-      project_ids
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -62,10 +78,11 @@ export const onUpdateUser = /* GraphQL */ `
       first_name
       last_name
       email
-      password
-      project_ids
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -76,10 +93,11 @@ export const onDeleteUser = /* GraphQL */ `
       first_name
       last_name
       email
-      password
-      project_ids
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -96,6 +114,9 @@ export const onCreateTask = /* GraphQL */ `
       user_id
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -112,6 +133,9 @@ export const onUpdateTask = /* GraphQL */ `
       user_id
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -128,6 +152,9 @@ export const onDeleteTask = /* GraphQL */ `
       user_id
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -143,6 +170,9 @@ export const onCreateTimeEntry = /* GraphQL */ `
       end
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -158,6 +188,9 @@ export const onUpdateTimeEntry = /* GraphQL */ `
       end
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -173,6 +206,54 @@ export const onDeleteTimeEntry = /* GraphQL */ `
       end
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const onCreateComment = /* GraphQL */ `
+  subscription OnCreateComment($filter: ModelSubscriptionCommentFilterInput) {
+    onCreateComment(filter: $filter) {
+      id
+      task_id
+      user_id
+      text
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const onUpdateComment = /* GraphQL */ `
+  subscription OnUpdateComment($filter: ModelSubscriptionCommentFilterInput) {
+    onUpdateComment(filter: $filter) {
+      id
+      task_id
+      user_id
+      text
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const onDeleteComment = /* GraphQL */ `
+  subscription OnDeleteComment($filter: ModelSubscriptionCommentFilterInput) {
+    onDeleteComment(filter: $filter) {
+      id
+      task_id
+      user_id
+      text
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -189,6 +270,9 @@ export const onCreateReport = /* GraphQL */ `
       user_id
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -205,6 +289,9 @@ export const onUpdateReport = /* GraphQL */ `
       user_id
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -221,6 +308,9 @@ export const onDeleteReport = /* GraphQL */ `
       user_id
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;

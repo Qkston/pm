@@ -4,6 +4,7 @@ import { Modal, Box, Typography, TextField, Button } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 
 import { CreateProjectInput, Project, UpdateProjectInput } from "../../API";
+import { useUserContext } from "../../contexts/UserContext";
 
 type Props = {
 	opened: boolean;
@@ -25,6 +26,8 @@ const style = {
 };
 
 export default function ProjectModal({ opened, project, onClose, onCreate, onUpdate }: Props) {
+	const { userID } = useUserContext();
+
 	const [title, setTitle] = useState<string>("");
 	const [description, setDescription] = useState<string>("");
 	const [finishDate, setFinishDate] = useState<moment.Moment | null>(null);
@@ -48,12 +51,13 @@ export default function ProjectModal({ opened, project, onClose, onCreate, onUpd
 	}, [project]);
 
 	const onCreateProject = () => {
-		// TODO: Add owner_id
+		if (!userID) return;
 		const data: CreateProjectInput = {
 			name: title,
 			description,
 			start_date: moment().format("YYYY-MM-DD"),
 			finish_date: finishDate ? moment(finishDate).format("YYYY-MM-DD") : null,
+			manager_id: userID,
 		};
 
 		onCreate(data);
@@ -67,6 +71,7 @@ export default function ProjectModal({ opened, project, onClose, onCreate, onUpd
 			name: title,
 			description,
 			finish_date: finishDate ? moment(finishDate).format("YYYY-MM-DD") : null,
+			_version: project?._version,
 		};
 
 		onUpdate(data);

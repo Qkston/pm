@@ -4,6 +4,8 @@ type Project @model @auth(rules: [{ allow: public }]) {
 	description: String
 	start_date: AWSDate!
 	finish_date: AWSDate
+  manager_id: String! 
+  participant_ids: [String] 
 }
 
 type User @model @auth(rules: [{ allow: public }]) {
@@ -11,8 +13,6 @@ type User @model @auth(rules: [{ allow: public }]) {
 	first_name: String!
 	last_name: String!
 	email: String!
-	password: String!
-	project_ids: [ID!]
 }
 
 type Task @model @auth(rules: [{ allow: public }]) {
@@ -23,15 +23,22 @@ type Task @model @auth(rules: [{ allow: public }]) {
 	create_date: AWSDate!
 	deadline: AWSDate!
 	project_id: ID! @index(name: "byProject")
-	user_id: ID @index(name: "byUser")
+	user_id: String
 }
 
 type TimeEntry @model @auth(rules: [{ allow: public }]) {
 	id: ID!
 	task_id: ID! @index(name: "byTask")
-	user_id: ID! @index(name: "byUser")
+	user_id: String!
 	start: AWSDateTime!
 	end: AWSDateTime
+}
+
+type Comment @model @auth(rules: [{ allow: public }]) {
+	id: ID!
+	task_id: ID! @index(name: "byTask")
+	user_id: String!
+	text: String!
 }
 
 type Report @model @auth(rules: [{ allow: public }]) {
@@ -42,5 +49,5 @@ type Report @model @auth(rules: [{ allow: public }]) {
 	end: AWSDate
 	project_id: ID! @index(name: "byProject")
 	task_id: ID @index(name: "byTask")
-	user_id: ID @index(name: "byUser")
+	user_id: String
 }

@@ -10,8 +10,13 @@ export const getProject = /* GraphQL */ `
       description
       start_date
       finish_date
+      manager_id
+      participant_ids
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -28,10 +33,48 @@ export const listProjects = /* GraphQL */ `
         description
         start_date
         finish_date
+        manager_id
+        participant_ids
         createdAt
         updatedAt
+        _version
+        _deleted
+        _lastChangedAt
       }
       nextToken
+      startedAt
+    }
+  }
+`;
+export const syncProjects = /* GraphQL */ `
+  query SyncProjects(
+    $filter: ModelProjectFilterInput
+    $limit: Int
+    $nextToken: String
+    $lastSync: AWSTimestamp
+  ) {
+    syncProjects(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      lastSync: $lastSync
+    ) {
+      items {
+        id
+        name
+        description
+        start_date
+        finish_date
+        manager_id
+        participant_ids
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      nextToken
+      startedAt
     }
   }
 `;
@@ -42,10 +85,11 @@ export const getUser = /* GraphQL */ `
       first_name
       last_name
       email
-      password
-      project_ids
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -61,12 +105,43 @@ export const listUsers = /* GraphQL */ `
         first_name
         last_name
         email
-        password
-        project_ids
         createdAt
         updatedAt
+        _version
+        _deleted
+        _lastChangedAt
       }
       nextToken
+      startedAt
+    }
+  }
+`;
+export const syncUsers = /* GraphQL */ `
+  query SyncUsers(
+    $filter: ModelUserFilterInput
+    $limit: Int
+    $nextToken: String
+    $lastSync: AWSTimestamp
+  ) {
+    syncUsers(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      lastSync: $lastSync
+    ) {
+      items {
+        id
+        first_name
+        last_name
+        email
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      nextToken
+      startedAt
     }
   }
 `;
@@ -83,6 +158,9 @@ export const getTask = /* GraphQL */ `
       user_id
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -104,8 +182,45 @@ export const listTasks = /* GraphQL */ `
         user_id
         createdAt
         updatedAt
+        _version
+        _deleted
+        _lastChangedAt
       }
       nextToken
+      startedAt
+    }
+  }
+`;
+export const syncTasks = /* GraphQL */ `
+  query SyncTasks(
+    $filter: ModelTaskFilterInput
+    $limit: Int
+    $nextToken: String
+    $lastSync: AWSTimestamp
+  ) {
+    syncTasks(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      lastSync: $lastSync
+    ) {
+      items {
+        id
+        title
+        description
+        status
+        create_date
+        deadline
+        project_id
+        user_id
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      nextToken
+      startedAt
     }
   }
 `;
@@ -119,6 +234,9 @@ export const getTimeEntry = /* GraphQL */ `
       end
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -137,8 +255,109 @@ export const listTimeEntries = /* GraphQL */ `
         end
         createdAt
         updatedAt
+        _version
+        _deleted
+        _lastChangedAt
       }
       nextToken
+      startedAt
+    }
+  }
+`;
+export const syncTimeEntries = /* GraphQL */ `
+  query SyncTimeEntries(
+    $filter: ModelTimeEntryFilterInput
+    $limit: Int
+    $nextToken: String
+    $lastSync: AWSTimestamp
+  ) {
+    syncTimeEntries(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      lastSync: $lastSync
+    ) {
+      items {
+        id
+        task_id
+        user_id
+        start
+        end
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
+export const getComment = /* GraphQL */ `
+  query GetComment($id: ID!) {
+    getComment(id: $id) {
+      id
+      task_id
+      user_id
+      text
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const listComments = /* GraphQL */ `
+  query ListComments(
+    $filter: ModelCommentFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listComments(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        task_id
+        user_id
+        text
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
+export const syncComments = /* GraphQL */ `
+  query SyncComments(
+    $filter: ModelCommentFilterInput
+    $limit: Int
+    $nextToken: String
+    $lastSync: AWSTimestamp
+  ) {
+    syncComments(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      lastSync: $lastSync
+    ) {
+      items {
+        id
+        task_id
+        user_id
+        text
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      nextToken
+      startedAt
     }
   }
 `;
@@ -155,6 +374,9 @@ export const getReport = /* GraphQL */ `
       user_id
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
     }
   }
 `;
@@ -176,8 +398,45 @@ export const listReports = /* GraphQL */ `
         user_id
         createdAt
         updatedAt
+        _version
+        _deleted
+        _lastChangedAt
       }
       nextToken
+      startedAt
+    }
+  }
+`;
+export const syncReports = /* GraphQL */ `
+  query SyncReports(
+    $filter: ModelReportFilterInput
+    $limit: Int
+    $nextToken: String
+    $lastSync: AWSTimestamp
+  ) {
+    syncReports(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      lastSync: $lastSync
+    ) {
+      items {
+        id
+        description
+        duration
+        start
+        end
+        project_id
+        task_id
+        user_id
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      nextToken
+      startedAt
     }
   }
 `;
@@ -207,39 +466,12 @@ export const tasksByProject_id = /* GraphQL */ `
         user_id
         createdAt
         updatedAt
+        _version
+        _deleted
+        _lastChangedAt
       }
       nextToken
-    }
-  }
-`;
-export const tasksByUser_id = /* GraphQL */ `
-  query TasksByUser_id(
-    $user_id: ID!
-    $sortDirection: ModelSortDirection
-    $filter: ModelTaskFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    tasksByUser_id(
-      user_id: $user_id
-      sortDirection: $sortDirection
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-    ) {
-      items {
-        id
-        title
-        description
-        status
-        create_date
-        deadline
-        project_id
-        user_id
-        createdAt
-        updatedAt
-      }
-      nextToken
+      startedAt
     }
   }
 `;
@@ -266,21 +498,25 @@ export const timeEntriesByTask_id = /* GraphQL */ `
         end
         createdAt
         updatedAt
+        _version
+        _deleted
+        _lastChangedAt
       }
       nextToken
+      startedAt
     }
   }
 `;
-export const timeEntriesByUser_id = /* GraphQL */ `
-  query TimeEntriesByUser_id(
-    $user_id: ID!
+export const commentsByTask_id = /* GraphQL */ `
+  query CommentsByTask_id(
+    $task_id: ID!
     $sortDirection: ModelSortDirection
-    $filter: ModelTimeEntryFilterInput
+    $filter: ModelCommentFilterInput
     $limit: Int
     $nextToken: String
   ) {
-    timeEntriesByUser_id(
-      user_id: $user_id
+    commentsByTask_id(
+      task_id: $task_id
       sortDirection: $sortDirection
       filter: $filter
       limit: $limit
@@ -290,12 +526,15 @@ export const timeEntriesByUser_id = /* GraphQL */ `
         id
         task_id
         user_id
-        start
-        end
+        text
         createdAt
         updatedAt
+        _version
+        _deleted
+        _lastChangedAt
       }
       nextToken
+      startedAt
     }
   }
 `;
@@ -325,8 +564,12 @@ export const reportsByProject_id = /* GraphQL */ `
         user_id
         createdAt
         updatedAt
+        _version
+        _deleted
+        _lastChangedAt
       }
       nextToken
+      startedAt
     }
   }
 `;
@@ -356,39 +599,12 @@ export const reportsByTask_id = /* GraphQL */ `
         user_id
         createdAt
         updatedAt
+        _version
+        _deleted
+        _lastChangedAt
       }
       nextToken
-    }
-  }
-`;
-export const reportsByUser_id = /* GraphQL */ `
-  query ReportsByUser_id(
-    $user_id: ID!
-    $sortDirection: ModelSortDirection
-    $filter: ModelReportFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    reportsByUser_id(
-      user_id: $user_id
-      sortDirection: $sortDirection
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-    ) {
-      items {
-        id
-        description
-        duration
-        start
-        end
-        project_id
-        task_id
-        user_id
-        createdAt
-        updatedAt
-      }
-      nextToken
+      startedAt
     }
   }
 `;

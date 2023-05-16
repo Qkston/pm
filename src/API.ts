@@ -8,6 +8,9 @@ export type CreateProjectInput = {
   description?: string | null,
   start_date: string,
   finish_date?: string | null,
+  manager_id: string,
+  participant_ids?: Array< string | null > | null,
+  _version?: number | null,
 };
 
 export type ModelProjectConditionInput = {
@@ -15,6 +18,8 @@ export type ModelProjectConditionInput = {
   description?: ModelStringInput | null,
   start_date?: ModelStringInput | null,
   finish_date?: ModelStringInput | null,
+  manager_id?: ModelStringInput | null,
+  participant_ids?: ModelStringInput | null,
   and?: Array< ModelProjectConditionInput | null > | null,
   or?: Array< ModelProjectConditionInput | null > | null,
   not?: ModelProjectConditionInput | null,
@@ -67,8 +72,13 @@ export type Project = {
   description?: string | null,
   start_date: string,
   finish_date?: string | null,
+  manager_id: string,
+  participant_ids?: Array< string | null > | null,
   createdAt: string,
   updatedAt: string,
+  _version: number,
+  _deleted?: boolean | null,
+  _lastChangedAt: number,
 };
 
 export type UpdateProjectInput = {
@@ -77,10 +87,14 @@ export type UpdateProjectInput = {
   description?: string | null,
   start_date?: string | null,
   finish_date?: string | null,
+  manager_id?: string | null,
+  participant_ids?: Array< string | null > | null,
+  _version?: number | null,
 };
 
 export type DeleteProjectInput = {
   id: string,
+  _version?: number | null,
 };
 
 export type CreateUserInput = {
@@ -88,19 +102,67 @@ export type CreateUserInput = {
   first_name: string,
   last_name: string,
   email: string,
-  password: string,
-  project_ids?: Array< string > | null,
+  _version?: number | null,
 };
 
 export type ModelUserConditionInput = {
   first_name?: ModelStringInput | null,
   last_name?: ModelStringInput | null,
   email?: ModelStringInput | null,
-  password?: ModelStringInput | null,
-  project_ids?: ModelIDInput | null,
   and?: Array< ModelUserConditionInput | null > | null,
   or?: Array< ModelUserConditionInput | null > | null,
   not?: ModelUserConditionInput | null,
+};
+
+export type User = {
+  __typename: "User",
+  id: string,
+  first_name: string,
+  last_name: string,
+  email: string,
+  createdAt: string,
+  updatedAt: string,
+  _version: number,
+  _deleted?: boolean | null,
+  _lastChangedAt: number,
+};
+
+export type UpdateUserInput = {
+  id: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  _version?: number | null,
+};
+
+export type DeleteUserInput = {
+  id: string,
+  _version?: number | null,
+};
+
+export type CreateTaskInput = {
+  id?: string | null,
+  title: string,
+  description?: string | null,
+  status: string,
+  create_date: string,
+  deadline: string,
+  project_id: string,
+  user_id?: string | null,
+  _version?: number | null,
+};
+
+export type ModelTaskConditionInput = {
+  title?: ModelStringInput | null,
+  description?: ModelStringInput | null,
+  status?: ModelStringInput | null,
+  create_date?: ModelStringInput | null,
+  deadline?: ModelStringInput | null,
+  project_id?: ModelIDInput | null,
+  user_id?: ModelStringInput | null,
+  and?: Array< ModelTaskConditionInput | null > | null,
+  or?: Array< ModelTaskConditionInput | null > | null,
+  not?: ModelTaskConditionInput | null,
 };
 
 export type ModelIDInput = {
@@ -119,55 +181,6 @@ export type ModelIDInput = {
   size?: ModelSizeInput | null,
 };
 
-export type User = {
-  __typename: "User",
-  id: string,
-  first_name: string,
-  last_name: string,
-  email: string,
-  password: string,
-  project_ids?: Array< string > | null,
-  createdAt: string,
-  updatedAt: string,
-};
-
-export type UpdateUserInput = {
-  id: string,
-  first_name?: string | null,
-  last_name?: string | null,
-  email?: string | null,
-  password?: string | null,
-  project_ids?: Array< string > | null,
-};
-
-export type DeleteUserInput = {
-  id: string,
-};
-
-export type CreateTaskInput = {
-  id?: string | null,
-  title: string,
-  description?: string | null,
-  status: string,
-  create_date: string,
-  deadline: string,
-  project_id: string,
-  user_id?: string | null,
-};
-
-export type ModelTaskConditionInput = {
-  title?: ModelStringInput | null,
-  description?: ModelStringInput | null,
-  status?: ModelStringInput | null,
-  create_date?: ModelStringInput | null,
-  deadline?: ModelStringInput | null,
-  project_id?: ModelIDInput | null,
-  user_id?: ModelIDInput | null,
-  and?: Array< ModelTaskConditionInput | null > | null,
-  or?: Array< ModelTaskConditionInput | null > | null,
-  not?: ModelTaskConditionInput | null,
-};
-
 export type Task = {
   __typename: "Task",
   id: string,
@@ -180,6 +193,9 @@ export type Task = {
   user_id?: string | null,
   createdAt: string,
   updatedAt: string,
+  _version: number,
+  _deleted?: boolean | null,
+  _lastChangedAt: number,
 };
 
 export type UpdateTaskInput = {
@@ -191,10 +207,12 @@ export type UpdateTaskInput = {
   deadline?: string | null,
   project_id?: string | null,
   user_id?: string | null,
+  _version?: number | null,
 };
 
 export type DeleteTaskInput = {
   id: string,
+  _version?: number | null,
 };
 
 export type CreateTimeEntryInput = {
@@ -203,11 +221,12 @@ export type CreateTimeEntryInput = {
   user_id: string,
   start: string,
   end?: string | null,
+  _version?: number | null,
 };
 
 export type ModelTimeEntryConditionInput = {
   task_id?: ModelIDInput | null,
-  user_id?: ModelIDInput | null,
+  user_id?: ModelStringInput | null,
   start?: ModelStringInput | null,
   end?: ModelStringInput | null,
   and?: Array< ModelTimeEntryConditionInput | null > | null,
@@ -224,6 +243,9 @@ export type TimeEntry = {
   end?: string | null,
   createdAt: string,
   updatedAt: string,
+  _version: number,
+  _deleted?: boolean | null,
+  _lastChangedAt: number,
 };
 
 export type UpdateTimeEntryInput = {
@@ -232,10 +254,55 @@ export type UpdateTimeEntryInput = {
   user_id?: string | null,
   start?: string | null,
   end?: string | null,
+  _version?: number | null,
 };
 
 export type DeleteTimeEntryInput = {
   id: string,
+  _version?: number | null,
+};
+
+export type CreateCommentInput = {
+  id?: string | null,
+  task_id: string,
+  user_id: string,
+  text: string,
+  _version?: number | null,
+};
+
+export type ModelCommentConditionInput = {
+  task_id?: ModelIDInput | null,
+  user_id?: ModelStringInput | null,
+  text?: ModelStringInput | null,
+  and?: Array< ModelCommentConditionInput | null > | null,
+  or?: Array< ModelCommentConditionInput | null > | null,
+  not?: ModelCommentConditionInput | null,
+};
+
+export type Comment = {
+  __typename: "Comment",
+  id: string,
+  task_id: string,
+  user_id: string,
+  text: string,
+  createdAt: string,
+  updatedAt: string,
+  _version: number,
+  _deleted?: boolean | null,
+  _lastChangedAt: number,
+};
+
+export type UpdateCommentInput = {
+  id: string,
+  task_id?: string | null,
+  user_id?: string | null,
+  text?: string | null,
+  _version?: number | null,
+};
+
+export type DeleteCommentInput = {
+  id: string,
+  _version?: number | null,
 };
 
 export type CreateReportInput = {
@@ -247,6 +314,7 @@ export type CreateReportInput = {
   project_id: string,
   task_id?: string | null,
   user_id?: string | null,
+  _version?: number | null,
 };
 
 export type ModelReportConditionInput = {
@@ -256,7 +324,7 @@ export type ModelReportConditionInput = {
   end?: ModelStringInput | null,
   project_id?: ModelIDInput | null,
   task_id?: ModelIDInput | null,
-  user_id?: ModelIDInput | null,
+  user_id?: ModelStringInput | null,
   and?: Array< ModelReportConditionInput | null > | null,
   or?: Array< ModelReportConditionInput | null > | null,
   not?: ModelReportConditionInput | null,
@@ -286,6 +354,9 @@ export type Report = {
   user_id?: string | null,
   createdAt: string,
   updatedAt: string,
+  _version: number,
+  _deleted?: boolean | null,
+  _lastChangedAt: number,
 };
 
 export type UpdateReportInput = {
@@ -297,10 +368,12 @@ export type UpdateReportInput = {
   project_id?: string | null,
   task_id?: string | null,
   user_id?: string | null,
+  _version?: number | null,
 };
 
 export type DeleteReportInput = {
   id: string,
+  _version?: number | null,
 };
 
 export type ModelProjectFilterInput = {
@@ -309,6 +382,8 @@ export type ModelProjectFilterInput = {
   description?: ModelStringInput | null,
   start_date?: ModelStringInput | null,
   finish_date?: ModelStringInput | null,
+  manager_id?: ModelStringInput | null,
+  participant_ids?: ModelStringInput | null,
   and?: Array< ModelProjectFilterInput | null > | null,
   or?: Array< ModelProjectFilterInput | null > | null,
   not?: ModelProjectFilterInput | null,
@@ -318,6 +393,7 @@ export type ModelProjectConnection = {
   __typename: "ModelProjectConnection",
   items:  Array<Project | null >,
   nextToken?: string | null,
+  startedAt?: number | null,
 };
 
 export type ModelUserFilterInput = {
@@ -325,8 +401,6 @@ export type ModelUserFilterInput = {
   first_name?: ModelStringInput | null,
   last_name?: ModelStringInput | null,
   email?: ModelStringInput | null,
-  password?: ModelStringInput | null,
-  project_ids?: ModelIDInput | null,
   and?: Array< ModelUserFilterInput | null > | null,
   or?: Array< ModelUserFilterInput | null > | null,
   not?: ModelUserFilterInput | null,
@@ -336,6 +410,7 @@ export type ModelUserConnection = {
   __typename: "ModelUserConnection",
   items:  Array<User | null >,
   nextToken?: string | null,
+  startedAt?: number | null,
 };
 
 export type ModelTaskFilterInput = {
@@ -346,7 +421,7 @@ export type ModelTaskFilterInput = {
   create_date?: ModelStringInput | null,
   deadline?: ModelStringInput | null,
   project_id?: ModelIDInput | null,
-  user_id?: ModelIDInput | null,
+  user_id?: ModelStringInput | null,
   and?: Array< ModelTaskFilterInput | null > | null,
   or?: Array< ModelTaskFilterInput | null > | null,
   not?: ModelTaskFilterInput | null,
@@ -356,12 +431,13 @@ export type ModelTaskConnection = {
   __typename: "ModelTaskConnection",
   items:  Array<Task | null >,
   nextToken?: string | null,
+  startedAt?: number | null,
 };
 
 export type ModelTimeEntryFilterInput = {
   id?: ModelIDInput | null,
   task_id?: ModelIDInput | null,
-  user_id?: ModelIDInput | null,
+  user_id?: ModelStringInput | null,
   start?: ModelStringInput | null,
   end?: ModelStringInput | null,
   and?: Array< ModelTimeEntryFilterInput | null > | null,
@@ -373,6 +449,24 @@ export type ModelTimeEntryConnection = {
   __typename: "ModelTimeEntryConnection",
   items:  Array<TimeEntry | null >,
   nextToken?: string | null,
+  startedAt?: number | null,
+};
+
+export type ModelCommentFilterInput = {
+  id?: ModelIDInput | null,
+  task_id?: ModelIDInput | null,
+  user_id?: ModelStringInput | null,
+  text?: ModelStringInput | null,
+  and?: Array< ModelCommentFilterInput | null > | null,
+  or?: Array< ModelCommentFilterInput | null > | null,
+  not?: ModelCommentFilterInput | null,
+};
+
+export type ModelCommentConnection = {
+  __typename: "ModelCommentConnection",
+  items:  Array<Comment | null >,
+  nextToken?: string | null,
+  startedAt?: number | null,
 };
 
 export type ModelReportFilterInput = {
@@ -383,7 +477,7 @@ export type ModelReportFilterInput = {
   end?: ModelStringInput | null,
   project_id?: ModelIDInput | null,
   task_id?: ModelIDInput | null,
-  user_id?: ModelIDInput | null,
+  user_id?: ModelStringInput | null,
   and?: Array< ModelReportFilterInput | null > | null,
   or?: Array< ModelReportFilterInput | null > | null,
   not?: ModelReportFilterInput | null,
@@ -393,6 +487,7 @@ export type ModelReportConnection = {
   __typename: "ModelReportConnection",
   items:  Array<Report | null >,
   nextToken?: string | null,
+  startedAt?: number | null,
 };
 
 export enum ModelSortDirection {
@@ -407,6 +502,8 @@ export type ModelSubscriptionProjectFilterInput = {
   description?: ModelSubscriptionStringInput | null,
   start_date?: ModelSubscriptionStringInput | null,
   finish_date?: ModelSubscriptionStringInput | null,
+  manager_id?: ModelSubscriptionStringInput | null,
+  participant_ids?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionProjectFilterInput | null > | null,
   or?: Array< ModelSubscriptionProjectFilterInput | null > | null,
 };
@@ -446,8 +543,6 @@ export type ModelSubscriptionUserFilterInput = {
   first_name?: ModelSubscriptionStringInput | null,
   last_name?: ModelSubscriptionStringInput | null,
   email?: ModelSubscriptionStringInput | null,
-  password?: ModelSubscriptionStringInput | null,
-  project_ids?: ModelSubscriptionIDInput | null,
   and?: Array< ModelSubscriptionUserFilterInput | null > | null,
   or?: Array< ModelSubscriptionUserFilterInput | null > | null,
 };
@@ -460,7 +555,7 @@ export type ModelSubscriptionTaskFilterInput = {
   create_date?: ModelSubscriptionStringInput | null,
   deadline?: ModelSubscriptionStringInput | null,
   project_id?: ModelSubscriptionIDInput | null,
-  user_id?: ModelSubscriptionIDInput | null,
+  user_id?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionTaskFilterInput | null > | null,
   or?: Array< ModelSubscriptionTaskFilterInput | null > | null,
 };
@@ -468,11 +563,20 @@ export type ModelSubscriptionTaskFilterInput = {
 export type ModelSubscriptionTimeEntryFilterInput = {
   id?: ModelSubscriptionIDInput | null,
   task_id?: ModelSubscriptionIDInput | null,
-  user_id?: ModelSubscriptionIDInput | null,
+  user_id?: ModelSubscriptionStringInput | null,
   start?: ModelSubscriptionStringInput | null,
   end?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionTimeEntryFilterInput | null > | null,
   or?: Array< ModelSubscriptionTimeEntryFilterInput | null > | null,
+};
+
+export type ModelSubscriptionCommentFilterInput = {
+  id?: ModelSubscriptionIDInput | null,
+  task_id?: ModelSubscriptionIDInput | null,
+  user_id?: ModelSubscriptionStringInput | null,
+  text?: ModelSubscriptionStringInput | null,
+  and?: Array< ModelSubscriptionCommentFilterInput | null > | null,
+  or?: Array< ModelSubscriptionCommentFilterInput | null > | null,
 };
 
 export type ModelSubscriptionReportFilterInput = {
@@ -483,7 +587,7 @@ export type ModelSubscriptionReportFilterInput = {
   end?: ModelSubscriptionStringInput | null,
   project_id?: ModelSubscriptionIDInput | null,
   task_id?: ModelSubscriptionIDInput | null,
-  user_id?: ModelSubscriptionIDInput | null,
+  user_id?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionReportFilterInput | null > | null,
   or?: Array< ModelSubscriptionReportFilterInput | null > | null,
 };
@@ -513,8 +617,13 @@ export type CreateProjectMutation = {
     description?: string | null,
     start_date: string,
     finish_date?: string | null,
+    manager_id: string,
+    participant_ids?: Array< string | null > | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -531,8 +640,13 @@ export type UpdateProjectMutation = {
     description?: string | null,
     start_date: string,
     finish_date?: string | null,
+    manager_id: string,
+    participant_ids?: Array< string | null > | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -549,8 +663,13 @@ export type DeleteProjectMutation = {
     description?: string | null,
     start_date: string,
     finish_date?: string | null,
+    manager_id: string,
+    participant_ids?: Array< string | null > | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -566,10 +685,11 @@ export type CreateUserMutation = {
     first_name: string,
     last_name: string,
     email: string,
-    password: string,
-    project_ids?: Array< string > | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -585,10 +705,11 @@ export type UpdateUserMutation = {
     first_name: string,
     last_name: string,
     email: string,
-    password: string,
-    project_ids?: Array< string > | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -604,10 +725,11 @@ export type DeleteUserMutation = {
     first_name: string,
     last_name: string,
     email: string,
-    password: string,
-    project_ids?: Array< string > | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -629,6 +751,9 @@ export type CreateTaskMutation = {
     user_id?: string | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -650,6 +775,9 @@ export type UpdateTaskMutation = {
     user_id?: string | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -671,6 +799,9 @@ export type DeleteTaskMutation = {
     user_id?: string | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -689,6 +820,9 @@ export type CreateTimeEntryMutation = {
     end?: string | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -707,6 +841,9 @@ export type UpdateTimeEntryMutation = {
     end?: string | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -725,6 +862,69 @@ export type DeleteTimeEntryMutation = {
     end?: string | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
+  } | null,
+};
+
+export type CreateCommentMutationVariables = {
+  input: CreateCommentInput,
+  condition?: ModelCommentConditionInput | null,
+};
+
+export type CreateCommentMutation = {
+  createComment?:  {
+    __typename: "Comment",
+    id: string,
+    task_id: string,
+    user_id: string,
+    text: string,
+    createdAt: string,
+    updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
+  } | null,
+};
+
+export type UpdateCommentMutationVariables = {
+  input: UpdateCommentInput,
+  condition?: ModelCommentConditionInput | null,
+};
+
+export type UpdateCommentMutation = {
+  updateComment?:  {
+    __typename: "Comment",
+    id: string,
+    task_id: string,
+    user_id: string,
+    text: string,
+    createdAt: string,
+    updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
+  } | null,
+};
+
+export type DeleteCommentMutationVariables = {
+  input: DeleteCommentInput,
+  condition?: ModelCommentConditionInput | null,
+};
+
+export type DeleteCommentMutation = {
+  deleteComment?:  {
+    __typename: "Comment",
+    id: string,
+    task_id: string,
+    user_id: string,
+    text: string,
+    createdAt: string,
+    updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -746,6 +946,9 @@ export type CreateReportMutation = {
     user_id?: string | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -767,6 +970,9 @@ export type UpdateReportMutation = {
     user_id?: string | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -788,6 +994,9 @@ export type DeleteReportMutation = {
     user_id?: string | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -803,8 +1012,13 @@ export type GetProjectQuery = {
     description?: string | null,
     start_date: string,
     finish_date?: string | null,
+    manager_id: string,
+    participant_ids?: Array< string | null > | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -824,10 +1038,46 @@ export type ListProjectsQuery = {
       description?: string | null,
       start_date: string,
       finish_date?: string | null,
+      manager_id: string,
+      participant_ids?: Array< string | null > | null,
       createdAt: string,
       updatedAt: string,
+      _version: number,
+      _deleted?: boolean | null,
+      _lastChangedAt: number,
     } | null >,
     nextToken?: string | null,
+    startedAt?: number | null,
+  } | null,
+};
+
+export type SyncProjectsQueryVariables = {
+  filter?: ModelProjectFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+  lastSync?: number | null,
+};
+
+export type SyncProjectsQuery = {
+  syncProjects?:  {
+    __typename: "ModelProjectConnection",
+    items:  Array< {
+      __typename: "Project",
+      id: string,
+      name: string,
+      description?: string | null,
+      start_date: string,
+      finish_date?: string | null,
+      manager_id: string,
+      participant_ids?: Array< string | null > | null,
+      createdAt: string,
+      updatedAt: string,
+      _version: number,
+      _deleted?: boolean | null,
+      _lastChangedAt: number,
+    } | null >,
+    nextToken?: string | null,
+    startedAt?: number | null,
   } | null,
 };
 
@@ -842,10 +1092,11 @@ export type GetUserQuery = {
     first_name: string,
     last_name: string,
     email: string,
-    password: string,
-    project_ids?: Array< string > | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -864,12 +1115,41 @@ export type ListUsersQuery = {
       first_name: string,
       last_name: string,
       email: string,
-      password: string,
-      project_ids?: Array< string > | null,
       createdAt: string,
       updatedAt: string,
+      _version: number,
+      _deleted?: boolean | null,
+      _lastChangedAt: number,
     } | null >,
     nextToken?: string | null,
+    startedAt?: number | null,
+  } | null,
+};
+
+export type SyncUsersQueryVariables = {
+  filter?: ModelUserFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+  lastSync?: number | null,
+};
+
+export type SyncUsersQuery = {
+  syncUsers?:  {
+    __typename: "ModelUserConnection",
+    items:  Array< {
+      __typename: "User",
+      id: string,
+      first_name: string,
+      last_name: string,
+      email: string,
+      createdAt: string,
+      updatedAt: string,
+      _version: number,
+      _deleted?: boolean | null,
+      _lastChangedAt: number,
+    } | null >,
+    nextToken?: string | null,
+    startedAt?: number | null,
   } | null,
 };
 
@@ -890,6 +1170,9 @@ export type GetTaskQuery = {
     user_id?: string | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -914,8 +1197,43 @@ export type ListTasksQuery = {
       user_id?: string | null,
       createdAt: string,
       updatedAt: string,
+      _version: number,
+      _deleted?: boolean | null,
+      _lastChangedAt: number,
     } | null >,
     nextToken?: string | null,
+    startedAt?: number | null,
+  } | null,
+};
+
+export type SyncTasksQueryVariables = {
+  filter?: ModelTaskFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+  lastSync?: number | null,
+};
+
+export type SyncTasksQuery = {
+  syncTasks?:  {
+    __typename: "ModelTaskConnection",
+    items:  Array< {
+      __typename: "Task",
+      id: string,
+      title: string,
+      description?: string | null,
+      status: string,
+      create_date: string,
+      deadline: string,
+      project_id: string,
+      user_id?: string | null,
+      createdAt: string,
+      updatedAt: string,
+      _version: number,
+      _deleted?: boolean | null,
+      _lastChangedAt: number,
+    } | null >,
+    nextToken?: string | null,
+    startedAt?: number | null,
   } | null,
 };
 
@@ -933,6 +1251,9 @@ export type GetTimeEntryQuery = {
     end?: string | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -954,8 +1275,112 @@ export type ListTimeEntriesQuery = {
       end?: string | null,
       createdAt: string,
       updatedAt: string,
+      _version: number,
+      _deleted?: boolean | null,
+      _lastChangedAt: number,
     } | null >,
     nextToken?: string | null,
+    startedAt?: number | null,
+  } | null,
+};
+
+export type SyncTimeEntriesQueryVariables = {
+  filter?: ModelTimeEntryFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+  lastSync?: number | null,
+};
+
+export type SyncTimeEntriesQuery = {
+  syncTimeEntries?:  {
+    __typename: "ModelTimeEntryConnection",
+    items:  Array< {
+      __typename: "TimeEntry",
+      id: string,
+      task_id: string,
+      user_id: string,
+      start: string,
+      end?: string | null,
+      createdAt: string,
+      updatedAt: string,
+      _version: number,
+      _deleted?: boolean | null,
+      _lastChangedAt: number,
+    } | null >,
+    nextToken?: string | null,
+    startedAt?: number | null,
+  } | null,
+};
+
+export type GetCommentQueryVariables = {
+  id: string,
+};
+
+export type GetCommentQuery = {
+  getComment?:  {
+    __typename: "Comment",
+    id: string,
+    task_id: string,
+    user_id: string,
+    text: string,
+    createdAt: string,
+    updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
+  } | null,
+};
+
+export type ListCommentsQueryVariables = {
+  filter?: ModelCommentFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListCommentsQuery = {
+  listComments?:  {
+    __typename: "ModelCommentConnection",
+    items:  Array< {
+      __typename: "Comment",
+      id: string,
+      task_id: string,
+      user_id: string,
+      text: string,
+      createdAt: string,
+      updatedAt: string,
+      _version: number,
+      _deleted?: boolean | null,
+      _lastChangedAt: number,
+    } | null >,
+    nextToken?: string | null,
+    startedAt?: number | null,
+  } | null,
+};
+
+export type SyncCommentsQueryVariables = {
+  filter?: ModelCommentFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+  lastSync?: number | null,
+};
+
+export type SyncCommentsQuery = {
+  syncComments?:  {
+    __typename: "ModelCommentConnection",
+    items:  Array< {
+      __typename: "Comment",
+      id: string,
+      task_id: string,
+      user_id: string,
+      text: string,
+      createdAt: string,
+      updatedAt: string,
+      _version: number,
+      _deleted?: boolean | null,
+      _lastChangedAt: number,
+    } | null >,
+    nextToken?: string | null,
+    startedAt?: number | null,
   } | null,
 };
 
@@ -976,6 +1401,9 @@ export type GetReportQuery = {
     user_id?: string | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -1000,8 +1428,43 @@ export type ListReportsQuery = {
       user_id?: string | null,
       createdAt: string,
       updatedAt: string,
+      _version: number,
+      _deleted?: boolean | null,
+      _lastChangedAt: number,
     } | null >,
     nextToken?: string | null,
+    startedAt?: number | null,
+  } | null,
+};
+
+export type SyncReportsQueryVariables = {
+  filter?: ModelReportFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+  lastSync?: number | null,
+};
+
+export type SyncReportsQuery = {
+  syncReports?:  {
+    __typename: "ModelReportConnection",
+    items:  Array< {
+      __typename: "Report",
+      id: string,
+      description?: string | null,
+      duration: number,
+      start: string,
+      end?: string | null,
+      project_id: string,
+      task_id?: string | null,
+      user_id?: string | null,
+      createdAt: string,
+      updatedAt: string,
+      _version: number,
+      _deleted?: boolean | null,
+      _lastChangedAt: number,
+    } | null >,
+    nextToken?: string | null,
+    startedAt?: number | null,
   } | null,
 };
 
@@ -1028,36 +1491,12 @@ export type TasksByProject_idQuery = {
       user_id?: string | null,
       createdAt: string,
       updatedAt: string,
+      _version: number,
+      _deleted?: boolean | null,
+      _lastChangedAt: number,
     } | null >,
     nextToken?: string | null,
-  } | null,
-};
-
-export type TasksByUser_idQueryVariables = {
-  user_id: string,
-  sortDirection?: ModelSortDirection | null,
-  filter?: ModelTaskFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type TasksByUser_idQuery = {
-  tasksByUser_id?:  {
-    __typename: "ModelTaskConnection",
-    items:  Array< {
-      __typename: "Task",
-      id: string,
-      title: string,
-      description?: string | null,
-      status: string,
-      create_date: string,
-      deadline: string,
-      project_id: string,
-      user_id?: string | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
+    startedAt?: number | null,
   } | null,
 };
 
@@ -1081,33 +1520,40 @@ export type TimeEntriesByTask_idQuery = {
       end?: string | null,
       createdAt: string,
       updatedAt: string,
+      _version: number,
+      _deleted?: boolean | null,
+      _lastChangedAt: number,
     } | null >,
     nextToken?: string | null,
+    startedAt?: number | null,
   } | null,
 };
 
-export type TimeEntriesByUser_idQueryVariables = {
-  user_id: string,
+export type CommentsByTask_idQueryVariables = {
+  task_id: string,
   sortDirection?: ModelSortDirection | null,
-  filter?: ModelTimeEntryFilterInput | null,
+  filter?: ModelCommentFilterInput | null,
   limit?: number | null,
   nextToken?: string | null,
 };
 
-export type TimeEntriesByUser_idQuery = {
-  timeEntriesByUser_id?:  {
-    __typename: "ModelTimeEntryConnection",
+export type CommentsByTask_idQuery = {
+  commentsByTask_id?:  {
+    __typename: "ModelCommentConnection",
     items:  Array< {
-      __typename: "TimeEntry",
+      __typename: "Comment",
       id: string,
       task_id: string,
       user_id: string,
-      start: string,
-      end?: string | null,
+      text: string,
       createdAt: string,
       updatedAt: string,
+      _version: number,
+      _deleted?: boolean | null,
+      _lastChangedAt: number,
     } | null >,
     nextToken?: string | null,
+    startedAt?: number | null,
   } | null,
 };
 
@@ -1134,8 +1580,12 @@ export type ReportsByProject_idQuery = {
       user_id?: string | null,
       createdAt: string,
       updatedAt: string,
+      _version: number,
+      _deleted?: boolean | null,
+      _lastChangedAt: number,
     } | null >,
     nextToken?: string | null,
+    startedAt?: number | null,
   } | null,
 };
 
@@ -1162,36 +1612,12 @@ export type ReportsByTask_idQuery = {
       user_id?: string | null,
       createdAt: string,
       updatedAt: string,
+      _version: number,
+      _deleted?: boolean | null,
+      _lastChangedAt: number,
     } | null >,
     nextToken?: string | null,
-  } | null,
-};
-
-export type ReportsByUser_idQueryVariables = {
-  user_id: string,
-  sortDirection?: ModelSortDirection | null,
-  filter?: ModelReportFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type ReportsByUser_idQuery = {
-  reportsByUser_id?:  {
-    __typename: "ModelReportConnection",
-    items:  Array< {
-      __typename: "Report",
-      id: string,
-      description?: string | null,
-      duration: number,
-      start: string,
-      end?: string | null,
-      project_id: string,
-      task_id?: string | null,
-      user_id?: string | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
+    startedAt?: number | null,
   } | null,
 };
 
@@ -1207,8 +1633,13 @@ export type OnCreateProjectSubscription = {
     description?: string | null,
     start_date: string,
     finish_date?: string | null,
+    manager_id: string,
+    participant_ids?: Array< string | null > | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -1224,8 +1655,13 @@ export type OnUpdateProjectSubscription = {
     description?: string | null,
     start_date: string,
     finish_date?: string | null,
+    manager_id: string,
+    participant_ids?: Array< string | null > | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -1241,8 +1677,13 @@ export type OnDeleteProjectSubscription = {
     description?: string | null,
     start_date: string,
     finish_date?: string | null,
+    manager_id: string,
+    participant_ids?: Array< string | null > | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -1257,10 +1698,11 @@ export type OnCreateUserSubscription = {
     first_name: string,
     last_name: string,
     email: string,
-    password: string,
-    project_ids?: Array< string > | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -1275,10 +1717,11 @@ export type OnUpdateUserSubscription = {
     first_name: string,
     last_name: string,
     email: string,
-    password: string,
-    project_ids?: Array< string > | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -1293,10 +1736,11 @@ export type OnDeleteUserSubscription = {
     first_name: string,
     last_name: string,
     email: string,
-    password: string,
-    project_ids?: Array< string > | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -1317,6 +1761,9 @@ export type OnCreateTaskSubscription = {
     user_id?: string | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -1337,6 +1784,9 @@ export type OnUpdateTaskSubscription = {
     user_id?: string | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -1357,6 +1807,9 @@ export type OnDeleteTaskSubscription = {
     user_id?: string | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -1374,6 +1827,9 @@ export type OnCreateTimeEntrySubscription = {
     end?: string | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -1391,6 +1847,9 @@ export type OnUpdateTimeEntrySubscription = {
     end?: string | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -1408,6 +1867,66 @@ export type OnDeleteTimeEntrySubscription = {
     end?: string | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
+  } | null,
+};
+
+export type OnCreateCommentSubscriptionVariables = {
+  filter?: ModelSubscriptionCommentFilterInput | null,
+};
+
+export type OnCreateCommentSubscription = {
+  onCreateComment?:  {
+    __typename: "Comment",
+    id: string,
+    task_id: string,
+    user_id: string,
+    text: string,
+    createdAt: string,
+    updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
+  } | null,
+};
+
+export type OnUpdateCommentSubscriptionVariables = {
+  filter?: ModelSubscriptionCommentFilterInput | null,
+};
+
+export type OnUpdateCommentSubscription = {
+  onUpdateComment?:  {
+    __typename: "Comment",
+    id: string,
+    task_id: string,
+    user_id: string,
+    text: string,
+    createdAt: string,
+    updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
+  } | null,
+};
+
+export type OnDeleteCommentSubscriptionVariables = {
+  filter?: ModelSubscriptionCommentFilterInput | null,
+};
+
+export type OnDeleteCommentSubscription = {
+  onDeleteComment?:  {
+    __typename: "Comment",
+    id: string,
+    task_id: string,
+    user_id: string,
+    text: string,
+    createdAt: string,
+    updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -1428,6 +1947,9 @@ export type OnCreateReportSubscription = {
     user_id?: string | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -1448,6 +1970,9 @@ export type OnUpdateReportSubscription = {
     user_id?: string | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
 
@@ -1468,5 +1993,8 @@ export type OnDeleteReportSubscription = {
     user_id?: string | null,
     createdAt: string,
     updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
   } | null,
 };
