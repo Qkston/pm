@@ -7,13 +7,14 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 
 import ParticipantListItem from "./ParticipantListItem";
 import TaskModal from "../../Tasks/TaskModal";
-import TaskTable from "../../Tasks/TaskTable";
+import TaskTable from "../../Tasks/Table/Table";
 
 import TasksSubscription from "../../../subscriptions/TaskSubscription";
 
 import { Project, Task } from "../../../API";
 import { updateProjectParticipants } from "../../../services/ProjectService";
 import { createTaskRecord, deleteTaskRecord, updateTaskRecord } from "../../../services/TaskService";
+import { useUserContext } from "../../../contexts/UserContext";
 
 type Props = {
 	project: Project;
@@ -21,6 +22,8 @@ type Props = {
 };
 
 export default function Dashboard({ project, onClose }: Props) {
+	const { userID } = useUserContext();
+
 	const tasks: Task[] = TasksSubscription();
 
 	const [openAddUserInput, setOpenAddUserInputStatus] = useState<boolean>(false);
@@ -122,27 +125,35 @@ export default function Dashboard({ project, onClose }: Props) {
 					</Toolbar>
 				</AppBar>
 				<DialogContent sx={{ display: "flex", p: 0 }}>
-					<Box sx={{ flex: 2, borderRight: "2px solid #eeeeee", p: "20px", boxSizing: "border-box" }}>
-						<Button variant="outlined" size="large" onClick={() => setOpenTaskModalStatus(true)}>
-							Створити завдання
-						</Button>
+					<Box sx={{ flex: userID === project.manager_id ? 4 : 2, borderRight: "2px solid #eeeeee", p: "20px", boxSizing: "border-box" }}>
+						{userID === project.manager_id && (
+							<Button variant="outlined" size="large" onClick={() => setOpenTaskModalStatus(true)}>
+								Створити завдання
+							</Button>
+						)}
 						<TaskTable
-							tasks={tasks.filter(t => t.project_id === project.id && !t._deleted)}
+							tasks={tasks.filter(t =>
+								userID !== project.manager_id ? t.user_id === userID : true && t.project_id === project.id && !t._deleted
+							)}
+							project={project}
 							onUpdate={updateTaskRecord}
 							onDelete={deleteTaskRecord}
 							setOpenTaskModalStatus={setOpenTaskModalStatus}
 							setEditingTask={setSelectedTask}
+							getEmailByCognitoID={getEmailByCognitoID}
 						/>
 					</Box>
 					<Box sx={{ flex: 4, borderRight: "2px solid #eeeeee", p: "20px", boxSizing: "border-box" }}></Box>
 					<Box sx={{ flex: 1, p: "20px", boxSizing: "border-box" }}>
-						<Button
-							variant="outlined"
-							size="large"
-							sx={{ display: openAddUserInput ? "none" : "block", m: "0 auto", height: "50px" }}
-							onClick={() => setOpenAddUserInputStatus(true)}>
-							Додати учасника
-						</Button>
+						{userID === project.manager_id && (
+							<Button
+								variant="outlined"
+								size="large"
+								sx={{ display: openAddUserInput ? "none" : "block", m: "0 auto", height: "50px" }}
+								onClick={() => setOpenAddUserInputStatus(true)}>
+								Додати учасника
+							</Button>
+						)}
 						<Box
 							sx={{
 								display: openAddUserInput ? "flex" : "none",

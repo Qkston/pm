@@ -3,6 +3,7 @@ import { Box, Card, CardContent, Divider, IconButton, Menu, MenuItem, Typography
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 import { Project } from "../../API";
+import { useUserContext } from "../../contexts/UserContext";
 
 type Props = {
 	project: Project;
@@ -19,6 +20,8 @@ export default function ProjectCard({
 	setOpenConfirmProjectDelete,
 	setOpenProjectDashboard,
 }: Props) {
+	const { userID } = useUserContext();
+
 	const [menuElement, setMenuElement] = useState<null | HTMLElement>(null);
 
 	const openMenu = (event: React.MouseEvent<HTMLElement>) => setMenuElement(event.currentTarget);
@@ -40,42 +43,44 @@ export default function ProjectCard({
 					<Typography variant="h5" component="h3" sx={{ pb: "5px" }}>
 						{project.name}
 					</Typography>
-					<Box>
-						<IconButton
-							onClick={(event: any) => {
-								event.stopPropagation();
-								openMenu(event);
-							}}>
-							<MoreVertIcon />
-						</IconButton>
-						<Menu
-							anchorEl={menuElement}
-							open={Boolean(menuElement)}
-							onClose={(event: any) => {
-								event.stopPropagation();
-								closeMenu();
-							}}>
-							<MenuItem
+					{userID === project.manager_id && (
+						<Box>
+							<IconButton
 								onClick={(event: any) => {
 									event.stopPropagation();
-									setSelectedProject(project);
-									closeMenu();
-									setOpenProjectModal(true);
+									openMenu(event);
 								}}>
-								Відредагувати
-							</MenuItem>
-							<MenuItem
-								onClick={(event: any) => {
+								<MoreVertIcon />
+							</IconButton>
+							<Menu
+								anchorEl={menuElement}
+								open={Boolean(menuElement)}
+								onClose={(event: any) => {
 									event.stopPropagation();
-									setSelectedProject(project);
 									closeMenu();
-									setOpenConfirmProjectDelete(true);
-								}}
-								sx={{ color: "#ff0000" }}>
-								Видалити
-							</MenuItem>
-						</Menu>
-					</Box>
+								}}>
+								<MenuItem
+									onClick={(event: any) => {
+										event.stopPropagation();
+										setSelectedProject(project);
+										closeMenu();
+										setOpenProjectModal(true);
+									}}>
+									Відредагувати
+								</MenuItem>
+								<MenuItem
+									onClick={(event: any) => {
+										event.stopPropagation();
+										setSelectedProject(project);
+										closeMenu();
+										setOpenConfirmProjectDelete(true);
+									}}
+									sx={{ color: "#ff0000" }}>
+									Видалити
+								</MenuItem>
+							</Menu>
+						</Box>
+					)}
 				</Box>
 				<Divider />
 				<Typography sx={{ mt: 1.5 }} color="text.secondary">
