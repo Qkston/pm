@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Modal, Box, Typography, TextField, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 
-import { CreateTaskInput, Task } from "../../API";
+import { CreateTaskInput, Task, UpdateTaskInput } from "../../API";
 import { useUserContext } from "../../contexts/UserContext";
 
 type Props = {
@@ -13,6 +13,8 @@ type Props = {
 	task?: Task;
 	onClose: () => void;
 	onCreate: (task: CreateTaskInput) => void;
+	onUpdate: (task: UpdateTaskInput) => void;
+	getEmailByCognitoID?: (cognitoID: string) => Promise<string | null | undefined>;
 };
 
 const style = {
@@ -26,7 +28,7 @@ const style = {
 	p: 3,
 };
 
-export default function TaskModal({ opened, projectID, userEmails, task, onClose, onCreate }: Props) {
+export default function TaskModal({ opened, projectID, userEmails, task, onClose, onCreate, onUpdate, getEmailByCognitoID }: Props) {
 	const { userID } = useUserContext();
 
 	const [title, setTitle] = useState<string>("");
@@ -45,11 +47,13 @@ export default function TaskModal({ opened, projectID, userEmails, task, onClose
 
 	useEffect(() => {
 		if (task) {
-			const { title, description, deadline } = task;
+			const { title, description, deadline, user_id } = task;
 
 			setTitle(title);
 			setDescription(description || "");
 			setDeadline(moment(deadline));
+
+			if (user_id && getEmailByCognitoID) getEmailByCognitoID(user_id).then(email => email && setPerformer(email));
 		}
 	}, [task]);
 
@@ -69,6 +73,22 @@ export default function TaskModal({ opened, projectID, userEmails, task, onClose
 		onClose();
 	};
 
+	const onUpdateTask = () => {
+		if (!userID || !task) return;
+		const { id, _version } = task;
+		const data: UpdateTaskInput = {
+			id,
+			title,
+			description,
+			deadline: moment(deadline).format("YYYY-MM-DD"),
+			user_id: performer,
+			_version,
+		};
+
+		onUpdate(data);
+		onClose();
+	};
+
 	return (
 		<Modal open={opened} onClose={onClose} aria-labelledby="modal-modal-title">
 			<Box sx={style}>
@@ -83,11 +103,14 @@ export default function TaskModal({ opened, projectID, userEmails, task, onClose
 							onChange={(event: SelectChangeEvent) => {
 								setPerformer(event.target.value as string);
 							}}>
-							{userEmails.map(email => (
-								<MenuItem key={email.replace("(manager)", "")} value={email.replace("(manager)", "")}>
-									{email.replace("(manager)", "")}
-								</MenuItem>
-							))}
+							{userEmails.map(
+								email =>
+									!email.includes("(manager)") && (
+										<MenuItem key={email} value={email}>
+											{email}
+										</MenuItem>
+									)
+							)}
 						</Select>
 					</FormControl>
 					<TextField value={title} onChange={(event: any) => setTitle(event.target.value)} label="Заголовок" variant="standard" required />
@@ -108,7 +131,7 @@ export default function TaskModal({ opened, projectID, userEmails, task, onClose
 					/>
 				</Box>
 				<Box sx={{ mt: "30px", display: "flex", justifyContent: "space-around" }}>
-					<Button variant="contained" size="medium" onClick={onCreateTask}>
+					<Button variant="contained" size="medium" onClick={() => (task ? onUpdateTask() : onCreateTask())}>
 						{task ? "Зберегти" : "Створити"}
 					</Button>
 					<Button variant="outlined" size="medium" onClick={onClose}>

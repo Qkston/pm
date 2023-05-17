@@ -7,10 +7,13 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 
 import ParticipantListItem from "./ParticipantListItem";
 import TaskModal from "../../Tasks/TaskModal";
+import TaskTable from "../../Tasks/TaskTable";
 
-import { Project } from "../../../API";
+import TasksSubscription from "../../../subscriptions/TaskSubscription";
+
+import { Project, Task } from "../../../API";
 import { updateProjectParticipants } from "../../../services/ProjectService";
-import { createTaskRecord } from "../../../services/TaskService";
+import { createTaskRecord, deleteTaskRecord, updateTaskRecord } from "../../../services/TaskService";
 
 type Props = {
 	project: Project;
@@ -18,8 +21,12 @@ type Props = {
 };
 
 export default function Dashboard({ project, onClose }: Props) {
+	const tasks: Task[] = TasksSubscription();
+
 	const [openAddUserInput, setOpenAddUserInputStatus] = useState<boolean>(false);
-	const [openCreateTaskModal, setOpenCreateTaskModalStatus] = useState<boolean>(false);
+	const [openTaskModal, setOpenTaskModalStatus] = useState<boolean>(false);
+
+	const [selectedTask, setSelectedTask] = useState<Task>();
 
 	const [email, setEmail] = useState<string>("");
 	const [userEmails, setUserEmails] = useState<string[]>([]);
@@ -78,6 +85,21 @@ export default function Dashboard({ project, onClose }: Props) {
 		}
 	};
 
+	const getEmailByCognitoID = async (cognitoID: string) => {
+		const cognitoIdentityServiceProvider = new CognitoIdentityServiceProvider();
+		const params = { UserPoolId: process.env.REACT_APP_AWS_USER_POOL_ID || "", Filter: `sub = "${cognitoID}"`, Limit: 1 };
+
+		try {
+			const response = await cognitoIdentityServiceProvider.listUsers(params).promise();
+			const users = response.Users;
+
+			if (!users?.length || !users[0].Attributes) return;
+			return users[0].Attributes?.find(attr => attr.Name === "email")?.Value;
+		} catch (error) {
+			console.error("Помилка при отриманні email:", error);
+		}
+	};
+
 	const addNewParticipant = (participantID: string) => {
 		const participantIDs = [...((project.participant_ids?.filter(Boolean) as string[]) || []), participantID];
 		updateProjectParticipants(project.id, participantIDs, project._version).then(() => setEmail(""));
@@ -100,11 +122,19 @@ export default function Dashboard({ project, onClose }: Props) {
 					</Toolbar>
 				</AppBar>
 				<DialogContent sx={{ display: "flex", p: 0 }}>
-					<Box sx={{ flex: 4, borderRight: "2px solid #eeeeee", p: "20px", boxSizing: "border-box" }}>
-						<Button variant="outlined" size="large" onClick={() => setOpenCreateTaskModalStatus(true)}>
+					<Box sx={{ flex: 2, borderRight: "2px solid #eeeeee", p: "20px", boxSizing: "border-box" }}>
+						<Button variant="outlined" size="large" onClick={() => setOpenTaskModalStatus(true)}>
 							Створити завдання
 						</Button>
+						<TaskTable
+							tasks={tasks.filter(t => t.project_id === project.id && !t._deleted)}
+							onUpdate={updateTaskRecord}
+							onDelete={deleteTaskRecord}
+							setOpenTaskModalStatus={setOpenTaskModalStatus}
+							setEditingTask={setSelectedTask}
+						/>
 					</Box>
+					<Box sx={{ flex: 4, borderRight: "2px solid #eeeeee", p: "20px", boxSizing: "border-box" }}></Box>
 					<Box sx={{ flex: 1, p: "20px", boxSizing: "border-box" }}>
 						<Button
 							variant="outlined"
@@ -161,14 +191,24 @@ export default function Dashboard({ project, onClose }: Props) {
 				</DialogContent>
 			</Dialog>
 			<TaskModal
-				opened={openCreateTaskModal}
+				opened={openTaskModal}
 				projectID={project.id}
 				userEmails={userEmails}
-				onClose={() => setOpenCreateTaskModalStatus(false)}
+				task={selectedTask}
+				getEmailByCognitoID={getEmailByCognitoID}
+				onClose={() => {
+					setOpenTaskModalStatus(false);
+					setSelectedTask(undefined);
+				}}
 				onCreate={async data => {
 					const cognitoID = await getCognitoIDByEmail(data.user_id || "");
 					const updatedData = { ...data, user_id: cognitoID };
 					createTaskRecord(updatedData);
+				}}
+				onUpdate={async data => {
+					const cognitoID = await getCognitoIDByEmail(data.user_id || "");
+					const updatedData = { ...data, user_id: cognitoID };
+					updateTaskRecord(updatedData);
 				}}
 			/>
 		</>
