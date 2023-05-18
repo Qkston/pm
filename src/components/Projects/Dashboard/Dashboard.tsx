@@ -8,6 +8,7 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import ParticipantListItem from "./ParticipantListItem";
 import TaskModal from "../../Tasks/TaskModal";
 import TaskTable from "../../Tasks/Table/Table";
+import TimeEntry from "../../TimeEntry/TimeEntry";
 
 import TasksSubscription from "../../../subscriptions/TaskSubscription";
 
@@ -141,8 +142,12 @@ export default function Dashboard({ project, onClose }: Props) {
 							getEmailByCognitoID={getEmailByCognitoID}
 						/>
 					</Box>
-					<Box sx={{ flex: 4, borderRight: "2px solid #eeeeee", p: "20px", boxSizing: "border-box" }}></Box>
-					<Box sx={{ flex: 1, width: "400px", p: "20px", boxSizing: "border-box" }}>
+					<Box sx={{ flex: 4, borderRight: "2px solid #eeeeee", p: "20px", boxSizing: "border-box" }}>
+						{userID && project.manager_id !== userID && (
+							<TimeEntry tasks={tasks.filter(t => t.user_id === userID && t.project_id === project.id && !t._deleted)} />
+						)}
+					</Box>
+					<Box sx={{ flex: userID === project.manager_id ? 2 : 1, width: "400px", p: "20px", boxSizing: "border-box" }}>
 						{userID === project.manager_id && (
 							<Button
 								variant="outlined"
