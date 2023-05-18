@@ -48,6 +48,7 @@ export default function ProjectCard({
 							<IconButton
 								onClick={(event: any) => {
 									event.stopPropagation();
+									setSelectedProject(project);
 									openMenu(event);
 								}}>
 								<MoreVertIcon />
@@ -62,7 +63,6 @@ export default function ProjectCard({
 								<MenuItem
 									onClick={(event: any) => {
 										event.stopPropagation();
-										setSelectedProject(project);
 										closeMenu();
 										setOpenProjectModal(true);
 									}}>
@@ -71,7 +71,6 @@ export default function ProjectCard({
 								<MenuItem
 									onClick={(event: any) => {
 										event.stopPropagation();
-										setSelectedProject(project);
 										closeMenu();
 										setOpenConfirmProjectDelete(true);
 									}}

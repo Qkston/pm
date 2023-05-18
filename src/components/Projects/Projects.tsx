@@ -54,13 +54,15 @@ export default function Projects() {
 						))}
 				</Box>
 			</Box>
-			<ProjectModal
-				opened={openProjectModal}
-				project={selectedProject}
-				onClose={() => setOpenProjectModal(false)}
-				onCreate={createProjectRecord}
-				onUpdate={updateProjectRecord}
-			/>
+			{openProjectModal && (
+				<ProjectModal
+					opened={openProjectModal}
+					project={selectedProject}
+					onClose={() => setOpenProjectModal(false)}
+					onCreate={createProjectRecord}
+					onUpdate={updateProjectRecord}
+				/>
+			)}
 			{openProjectDashboard && selectedProject && <Dashboard project={selectedProject} onClose={() => setOpenProjectDashboard(false)} />}
 			<Dialog
 				open={openConfirmProjectDelete}

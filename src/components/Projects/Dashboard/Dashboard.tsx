@@ -132,9 +132,7 @@ export default function Dashboard({ project, onClose }: Props) {
 							</Button>
 						)}
 						<TaskTable
-							tasks={tasks.filter(t =>
-								userID !== project.manager_id ? t.user_id === userID : true && t.project_id === project.id && !t._deleted
-							)}
+							tasks={tasks.filter(t => (userID === project.manager_id || t.user_id === userID) && t.project_id === project.id && !t._deleted)}
 							project={project}
 							onUpdate={updateTaskRecord}
 							onDelete={deleteTaskRecord}
@@ -144,7 +142,7 @@ export default function Dashboard({ project, onClose }: Props) {
 						/>
 					</Box>
 					<Box sx={{ flex: 4, borderRight: "2px solid #eeeeee", p: "20px", boxSizing: "border-box" }}></Box>
-					<Box sx={{ flex: 1, p: "20px", boxSizing: "border-box" }}>
+					<Box sx={{ flex: 1, width: "400px", p: "20px", boxSizing: "border-box" }}>
 						{userID === project.manager_id && (
 							<Button
 								variant="outlined"
@@ -184,13 +182,14 @@ export default function Dashboard({ project, onClose }: Props) {
 								</IconButton>
 							</Box>
 						</Box>
-						<List sx={{ width: "100%", mt: "20px" }}>
+						<List sx={{ mt: "20px" }}>
 							{userEmails
 								.sort((a, b) => a.localeCompare(b))
 								.map(email => (
 									<ParticipantListItem
 										key={email}
 										email={email}
+										showRemove={project.manager_id === userID}
 										removeParticipant={async (email: string) => {
 											const cognitoID = await getCognitoIDByEmail(email);
 											if (cognitoID) removeParticipant(cognitoID);
