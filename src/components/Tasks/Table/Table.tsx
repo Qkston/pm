@@ -116,7 +116,7 @@ export default function TaskTable({ tasks, project, onUpdate, onDelete, setOpenT
 							onUpdate({ id, status: "DONE", _version });
 							closeMenu();
 						}}>
-						Виконано
+						Завершено
 					</MenuItem>
 				)}
 				{userID === project.manager_id && (

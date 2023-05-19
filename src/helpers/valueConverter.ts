@@ -5,7 +5,7 @@ export const getCorrectTaskStatus = (status: string) => {
 		case "INPROGRESS":
 			return "В процесі";
 		case "DONE":
-			return "Виконано";
+			return "Завершено";
 		default:
 			return "-";
 	}

@@ -147,7 +147,7 @@ export default function TimeEntry({ tasks }: Props) {
 								<MenuItem key={t.id} value={t.id}>
 									<span>{t.title}</span>
 									{t.id !== selectedTask?.id && (
-										<Box sx={{ background: getStatusColor(t.status), borderRadius: "20px", fontSize: "14px", ml: "10px", p: "5px 10px" }}>
+										<Box sx={{ background: getStatusColor(t.status), borderRadius: "20px", fontSize: "14px", ml: "10px", p: "0 10px" }}>
 											{getCorrectTaskStatus(t.status)}
 										</Box>
 									)}
