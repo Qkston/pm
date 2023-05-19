@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Box, IconButton, TableCell, TableRow } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
+import { getCorrectTaskStatus, getStatusColor } from "../../../helpers/valueConverter";
+
 import { Project, Task } from "../../../API";
 import { useUserContext } from "../../../contexts/UserContext";
 
@@ -32,37 +34,21 @@ export default function TaskTableRow({ task, project, openMenu, getEmailByCognit
 		fetchUserEmail(user_id);
 	}, [task]);
 
-	const cellSX = { p: "10px" };
-	const statusColor = status === "DONE" ? "#00FF00" : status === "INPROGRESS" ? "#FFFF00" : "#EFEFEF";
-
-	const getCorrectTaskStatus = (status: string) => {
-		switch (status) {
-			case "NEW":
-				return "Не почато";
-			case "INPROGRESS":
-				return "В процесі";
-			case "DONE":
-				return "Виконано";
-			default:
-				return "-";
-		}
-	};
-
 	return (
 		<TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-			<TableCell sx={cellSX}>{title}</TableCell>
-			<TableCell sx={cellSX} align="center">
+			<TableCell sx={{ p: "10px" }}>{title}</TableCell>
+			<TableCell sx={{ p: "10px" }} align="center">
 				{deadline}
 			</TableCell>
-			<TableCell sx={cellSX} align="center">
-				<Box sx={{ background: statusColor, borderRadius: "20px" }}>{getCorrectTaskStatus(status)}</Box>
+			<TableCell sx={{ p: "10px" }} align="center">
+				<Box sx={{ background: getStatusColor(status), borderRadius: "20px" }}>{getCorrectTaskStatus(status)}</Box>
 			</TableCell>
 			{userID === project.manager_id && (
 				<TableCell sx={{ p: "10px" }} align="center">
 					{userEmail}
 				</TableCell>
 			)}
-			<TableCell sx={cellSX} align="center">
+			<TableCell sx={{ p: "10px" }} align="center">
 				<IconButton onClick={(event: any) => openMenu(event, task)}>
 					<MoreVertIcon />
 				</IconButton>

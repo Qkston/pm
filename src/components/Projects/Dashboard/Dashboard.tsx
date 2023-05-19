@@ -1,14 +1,32 @@
 import { useEffect, useState } from "react";
 import { CognitoIdentityServiceProvider, config } from "aws-sdk";
-import { Dialog, DialogTitle, DialogContent, AppBar, IconButton, Toolbar, Box, Button, List, TextField } from "@mui/material";
+import {
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	AppBar,
+	IconButton,
+	Toolbar,
+	Box,
+	Button,
+	List,
+	TextField,
+	FormControl,
+	InputLabel,
+	MenuItem,
+	Select,
+	SelectChangeEvent,
+} from "@mui/material";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import CloseIcon from "@mui/icons-material/Close";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+import ClearIcon from "@mui/icons-material/Clear";
 
 import ParticipantListItem from "./ParticipantListItem";
 import TaskModal from "../../Tasks/TaskModal";
 import TaskTable from "../../Tasks/Table/Table";
 import TimeEntry from "../../TimeEntry/TimeEntry";
+import { getCorrectTaskStatus } from "../../../helpers/valueConverter";
 
 import TasksSubscription from "../../../subscriptions/TaskSubscription";
 
@@ -34,6 +52,8 @@ export default function Dashboard({ project, onClose }: Props) {
 
 	const [email, setEmail] = useState<string>("");
 	const [userEmails, setUserEmails] = useState<string[]>([]);
+
+	const [filterStatus, setFilterStatus] = useState<string>("");
 
 	useEffect(() => {
 		getEmails();
@@ -127,13 +147,44 @@ export default function Dashboard({ project, onClose }: Props) {
 				</AppBar>
 				<DialogContent sx={{ display: "flex", p: 0 }}>
 					<Box sx={{ flex: userID === project.manager_id ? 4 : 2, borderRight: "2px solid #eeeeee", p: "20px", boxSizing: "border-box" }}>
-						{userID === project.manager_id && (
-							<Button variant="outlined" size="large" onClick={() => setOpenTaskModalStatus(true)}>
-								Створити завдання
-							</Button>
-						)}
+						<Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+							{userID === project.manager_id && (
+								<Button variant="outlined" size="large" onClick={() => setOpenTaskModalStatus(true)}>
+									Створити завдання
+								</Button>
+							)}
+							<FormControl sx={{ width: "300px" }} variant="standard">
+								<InputLabel>Статус</InputLabel>
+								<Select
+									value={filterStatus}
+									onChange={(event: SelectChangeEvent) => {
+										setFilterStatus(event.target.value as string);
+									}}
+									endAdornment={
+										<IconButton sx={{ visibility: filterStatus ? "visible" : "hidden" }} onClick={() => setFilterStatus("")}>
+											<ClearIcon />
+										</IconButton>
+									}
+									sx={{
+										"& .MuiSelect-iconStandard": { display: filterStatus ? "none" : "" },
+										"&.Mui-focused .MuiIconButton-root": { color: "primary.main" },
+									}}>
+									{["NEW", "INPROGRESS", "DONE"].map(status => (
+										<MenuItem key={status} value={status}>
+											{getCorrectTaskStatus(status)}
+										</MenuItem>
+									))}
+								</Select>
+							</FormControl>
+						</Box>
 						<TaskTable
-							tasks={tasks.filter(t => (userID === project.manager_id || t.user_id === userID) && t.project_id === project.id && !t._deleted)}
+							tasks={tasks.filter(
+								({ status, user_id, project_id, _deleted }) =>
+									(!filterStatus || status === filterStatus) &&
+									(userID === project.manager_id || user_id === userID) &&
+									project_id === project.id &&
+									!_deleted
+							)}
 							project={project}
 							onUpdate={updateTaskRecord}
 							onDelete={deleteTaskRecord}

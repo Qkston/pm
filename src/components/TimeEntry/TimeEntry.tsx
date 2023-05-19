@@ -20,6 +20,8 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import PauseIcon from "@mui/icons-material/Pause";
 import DeleteIcon from "@mui/icons-material/Delete";
 
+import { getCorrectTaskStatus, getStatusColor } from "../../helpers/valueConverter";
+
 import TimeEntriesSubscription from "../../subscriptions/TimeEntrySubscription";
 
 import { CreateTimeEntryInput, Task, TimeEntry as TimeEntryAPI, UpdateTimeEntryInput } from "../../API";
@@ -77,19 +79,6 @@ export default function TimeEntry({ tasks }: Props) {
 			clearInterval(interval);
 		};
 	}, [isTimerOn, timeEntries]);
-
-	const getCorrectTaskStatus = (status: string) => {
-		switch (status) {
-			case "NEW":
-				return "Не почато";
-			case "INPROGRESS":
-				return "В процесі";
-			case "DONE":
-				return "Виконано";
-			default:
-				return "-";
-		}
-	};
 
 	const onCreate = () => {
 		if (!selectedTask || !userID) return;
@@ -154,12 +143,11 @@ export default function TimeEntry({ tasks }: Props) {
 							setSelectedTask(tasks.find(t => t.id === event.target.value) || (undefined as Task | undefined));
 						}}>
 						{tasks.map(t => {
-							const statusColor = t.status === "DONE" ? "#00FF00" : t.status === "INPROGRESS" ? "#FFFF00" : "#EFEFEF";
 							return (
 								<MenuItem key={t.id} value={t.id}>
 									<span>{t.title}</span>
 									{t.id !== selectedTask?.id && (
-										<Box sx={{ background: statusColor, borderRadius: "20px", fontSize: "14px", ml: "10px", p: "5px 10px" }}>
+										<Box sx={{ background: getStatusColor(t.status), borderRadius: "20px", fontSize: "14px", ml: "10px", p: "5px 10px" }}>
 											{getCorrectTaskStatus(t.status)}
 										</Box>
 									)}
