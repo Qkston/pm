@@ -1,16 +1,31 @@
 import { useEffect, useState } from "react";
 import moment from "moment";
-import { Box, FormControl, IconButton, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
+import {
+	Box,
+	Button,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	DialogTitle,
+	FormControl,
+	IconButton,
+	InputLabel,
+	MenuItem,
+	Select,
+	SelectChangeEvent,
+	Typography,
+} from "@mui/material";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import PauseIcon from "@mui/icons-material/Pause";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 import TimeEntriesSubscription from "../../subscriptions/TimeEntrySubscription";
 
 import { CreateTimeEntryInput, Task, TimeEntry as TimeEntryAPI, UpdateTimeEntryInput } from "../../API";
-import { createTimeEntryRecord, updateTimeEntryRecord } from "../../services/TimeEntryService";
-import { updateTaskRecord } from "../../services/TaskService";
 import { useUserContext } from "../../contexts/UserContext";
+import { createTimeEntryRecord, deleteTimeEntryRecord, updateTimeEntryRecord } from "../../services/TimeEntryService";
+import { updateTaskRecord } from "../../services/TaskService";
 
 type Props = {
 	tasks: Task[];
@@ -28,11 +43,15 @@ export default function TimeEntry({ tasks }: Props) {
 	const timeEntries = TimeEntriesSubscription();
 
 	const [selectedTask, setSelectedTask] = useState<Task>();
+	const [selectedTimeEntry, setSelectedTimeEntry] = useState<TimeEntryAPI>();
+
 	const [timerValue, setTimerValue] = useState<TimerType>({ h: 0, m: 0, s: 0 });
-	const [isTimerOn, setTimerOnStatus] = useState<boolean>();
+
+	const [isTimerOn, setTimerOnStatus] = useState<boolean>(false);
+	const [openConfirmDelete, setOpenConfirmDelete] = useState<boolean>(false);
 
 	useEffect(() => {
-		const uncompletedTask = tasks.find(({ id }) => timeEntries.some(te => !te.end && id === te.task_id));
+		const uncompletedTask = tasks.find(({ id }) => timeEntries.some(te => !te.end && id === te.task_id && !te._deleted));
 
 		setSelectedTask(uncompletedTask);
 		setTimerOnStatus(!!uncompletedTask);
@@ -41,7 +60,7 @@ export default function TimeEntry({ tasks }: Props) {
 	useEffect(() => {
 		const interval = setInterval(() => {
 			if (selectedTask && isTimerOn) {
-				const timeEntry = timeEntries.find(te => !te.end && selectedTask.id === te.task_id);
+				const timeEntry = timeEntries.find(te => !te.end && selectedTask.id === te.task_id && !te._deleted);
 				if (!timeEntry) return;
 
 				const duration = moment.duration(moment(timeEntry.start).diff(moment()));
@@ -89,7 +108,7 @@ export default function TimeEntry({ tasks }: Props) {
 	const onUpdate = () => {
 		if (!selectedTask) return;
 
-		const timeEntry = timeEntries.find(te => !te.end && selectedTask.id === te.task_id);
+		const timeEntry = timeEntries.find(te => !te.end && selectedTask.id === te.task_id && !te._deleted);
 		if (!timeEntry) return;
 		const { id, _version } = timeEntry;
 
@@ -108,9 +127,8 @@ export default function TimeEntry({ tasks }: Props) {
 		return "Other";
 	};
 
-	// Групування записів за датою
 	const groupedTimeEntries: { entries: TimeEntryAPI[] } = timeEntries
-		.filter(te => te.end && userID === te.user_id && tasks.some(t => t.id === te.task_id))
+		.filter(te => te.end && userID === te.user_id && tasks.some(t => t.id === te.task_id) && !te._deleted)
 		.sort((a, b) => moment(b.start).diff(a.start))
 		.reduce((groups: any, entry) => {
 			const key = getGroupingKey(entry);
@@ -178,13 +196,26 @@ export default function TimeEntry({ tasks }: Props) {
 						{entries.map((e: TimeEntryAPI) => {
 							const task = tasks.find(t => t.id === e.task_id);
 							return (
-								<Box key={e.id} sx={{ display: "flex", alignItems: "center", m: "0 0 5px 10px", columnGap: "20px" }}>
+								<Box
+									key={e.id}
+									sx={{
+										display: "flex",
+										alignItems: "center",
+										m: "0 0 5px 10px",
+										p: "5px",
+										columnGap: "20px",
+										":hover": { background: "#efefef" },
+									}}>
 									{task && <Typography sx={{ flex: 4 }}>{task.title}</Typography>}
 									<Typography>{moment(e.start).format("HH:mm:ss")}</Typography>
 									<Typography>-</Typography>
 									<Typography>{moment(e.end).format("HH:mm:ss")}</Typography>
-									<IconButton>
-										<MoreVertIcon />
+									<IconButton
+										onClick={() => {
+											setOpenConfirmDelete(true);
+											setSelectedTimeEntry(e);
+										}}>
+										<DeleteIcon color="error" />
 									</IconButton>
 								</Box>
 							);
@@ -192,6 +223,29 @@ export default function TimeEntry({ tasks }: Props) {
 					</Box>
 				))}
 			</Box>
+			{openConfirmDelete && selectedTimeEntry && (
+				<Dialog open onClose={() => setOpenConfirmDelete(false)}>
+					<DialogTitle>Видалення запису відстеження часу</DialogTitle>
+					<DialogContent>
+						<DialogContentText>Ви дійсно хочете видалити запис відстеження часу? Після видалення він зникне назавжди</DialogContentText>
+					</DialogContent>
+					<DialogActions sx={{ display: "flex", justifyContent: "center", columnGap: "20px", mb: "10px" }}>
+						<Button
+							onClick={() => {
+								const { id, _version } = selectedTimeEntry;
+								deleteTimeEntryRecord({ id, _version });
+								setOpenConfirmDelete(false);
+							}}
+							variant="contained"
+							color="error">
+							Видалити
+						</Button>
+						<Button onClick={() => setOpenConfirmDelete(false)} autoFocus variant="outlined">
+							Скасувати
+						</Button>
+					</DialogActions>
+				</Dialog>
+			)}
 		</Box>
 	);
 }
