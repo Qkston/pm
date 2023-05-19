@@ -1,3 +1,4 @@
+import moment from "moment";
 import { useState, useEffect } from "react";
 import { Box, IconButton, TableCell, TableRow } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -37,7 +38,7 @@ export default function TaskTableRow({ task, project, openMenu, getEmailByCognit
 	return (
 		<TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
 			<TableCell sx={{ p: "10px" }}>{title}</TableCell>
-			<TableCell sx={{ p: "10px" }} align="center">
+			<TableCell sx={{ p: "10px", color: moment(deadline).isSameOrBefore(moment()) ? "#ff0000" : "inherit" }} align="center">
 				{deadline}
 			</TableCell>
 			<TableCell sx={{ p: "10px" }} align="center">
