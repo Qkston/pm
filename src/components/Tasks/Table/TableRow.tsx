@@ -4,6 +4,7 @@ import { Box, IconButton, TableCell, TableRow } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 import { getCorrectTaskStatus, getStatusColor } from "../../../helpers/valueConverter";
+import { getEmailByCognitoID } from "../../../helpers/cognitoHelper";
 
 import { Project, Task } from "../../../API";
 import { useUserContext } from "../../../contexts/UserContext";
@@ -12,10 +13,10 @@ type Props = {
 	task: Task;
 	project: Project;
 	openMenu: (event: React.MouseEvent<HTMLElement>, task: Task) => void;
-	getEmailByCognitoID?: (cognitoID: string) => Promise<string | null | undefined>;
+	openTaskModal: () => void;
 };
 
-export default function TaskTableRow({ task, project, openMenu, getEmailByCognitoID }: Props) {
+export default function TaskTableRow({ task, project, openMenu, openTaskModal }: Props) {
 	const { userID } = useUserContext();
 	const { title, deadline, status, user_id } = task;
 
@@ -24,7 +25,7 @@ export default function TaskTableRow({ task, project, openMenu, getEmailByCognit
 	useEffect(() => {
 		const fetchUserEmail = async (user_id?: string | null) => {
 			try {
-				if (!getEmailByCognitoID || !user_id) return;
+				if (!user_id) return;
 				const email = await getEmailByCognitoID(user_id);
 				setUserEmail(email || "-");
 			} catch (error) {
@@ -36,7 +37,7 @@ export default function TaskTableRow({ task, project, openMenu, getEmailByCognit
 	}, [task]);
 
 	return (
-		<TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+		<TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 }, cursor: "pointer" }} onClick={openTaskModal}>
 			<TableCell sx={{ p: "10px" }}>{title}</TableCell>
 			<TableCell sx={{ p: "10px", color: moment(deadline).isSameOrBefore(moment()) ? "#ff0000" : "inherit" }} align="center">
 				{deadline}
@@ -50,7 +51,11 @@ export default function TaskTableRow({ task, project, openMenu, getEmailByCognit
 				</TableCell>
 			)}
 			<TableCell sx={{ p: "10px" }} align="center">
-				<IconButton onClick={(event: any) => openMenu(event, task)}>
+				<IconButton
+					onClick={(event: any) => {
+						event.stopPropagation();
+						openMenu(event, task);
+					}}>
 					<MoreVertIcon />
 				</IconButton>
 			</TableCell>

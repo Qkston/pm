@@ -18,9 +18,11 @@ import {
 	DialogTitle,
 } from "@mui/material";
 
+import TaskDetailsModal from "../TaskDetailsModal";
+import TaskTableRow from "./TableRow";
+
 import { DeleteTaskInput, Project, Task, UpdateTaskInput } from "../../../API";
 import { useUserContext } from "../../../contexts/UserContext";
-import TaskTableRow from "./TableRow";
 
 type Props = {
 	tasks: Task[];
@@ -29,15 +31,15 @@ type Props = {
 	onDelete: (task: DeleteTaskInput) => void;
 	setOpenTaskModalStatus: (open: boolean) => void;
 	setEditingTask: (task: Task) => void;
-	getEmailByCognitoID?: (cognitoID: string) => Promise<string | null | undefined>;
 };
 
-export default function TaskTable({ tasks, project, onUpdate, onDelete, setOpenTaskModalStatus, setEditingTask, getEmailByCognitoID }: Props) {
+export default function TaskTable({ tasks, project, onUpdate, onDelete, setOpenTaskModalStatus, setEditingTask }: Props) {
 	const { userID } = useUserContext();
 
 	const [menuElement, setMenuElement] = useState<null | HTMLElement>(null);
 
 	const [openConfirmTaskDelete, setOpenConfirmTaskDelete] = useState<boolean>(false);
+	const [openTaskDetailsModalStatus, setOpenTaskDetailsModalStatus] = useState<boolean>(false);
 
 	const [selectedTask, setSelectedTask] = useState<Task>();
 
@@ -49,6 +51,16 @@ export default function TaskTable({ tasks, project, onUpdate, onDelete, setOpenT
 	const closeMenu = () => {
 		setMenuElement(null);
 		setSelectedTask(undefined);
+	};
+
+	const openTaskDetailsModal = (task: Task) => {
+		setSelectedTask(task);
+		setOpenTaskDetailsModalStatus(true);
+	};
+
+	const closeTaskDetailsModal = () => {
+		setSelectedTask(undefined);
+		setOpenTaskDetailsModalStatus(false);
 	};
 
 	return (
@@ -84,7 +96,13 @@ export default function TaskTable({ tasks, project, onUpdate, onDelete, setOpenT
 									return moment(b.deadline).diff(a.deadline);
 								})
 								.map(task => (
-									<TaskTableRow key={task.id} task={task} project={project} openMenu={openMenu} getEmailByCognitoID={getEmailByCognitoID} />
+									<TaskTableRow
+										key={task.id}
+										task={task}
+										project={project}
+										openMenu={openMenu}
+										openTaskModal={() => openTaskDetailsModal(task)}
+									/>
 								))
 						) : (
 							<TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
@@ -129,7 +147,7 @@ export default function TaskTable({ tasks, project, onUpdate, onDelete, setOpenT
 				<Dialog open={openConfirmTaskDelete} onClose={() => setOpenConfirmTaskDelete(false)}>
 					<DialogTitle>{`Видалення ${selectedTask ? `"${selectedTask.title}"` : ""} завдання`}</DialogTitle>
 					<DialogContent>
-						<DialogContentText id="alert-dialog-description">
+						<DialogContentText>
 							Ви дійсно хочете видалити {`${selectedTask ? `"${selectedTask.title}"` : ""}`} завдання? Після видалення це завдання зникне
 							назавжди
 						</DialogContentText>
@@ -159,6 +177,7 @@ export default function TaskTable({ tasks, project, onUpdate, onDelete, setOpenT
 					</DialogActions>
 				</Dialog>
 			)}
+			{openTaskDetailsModalStatus && selectedTask && <TaskDetailsModal opened onClose={closeTaskDetailsModal} task={selectedTask} />}
 		</>
 	);
 }

@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { Modal, Box, Typography, TextField, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 
+import { getEmailByCognitoID } from "../../helpers/cognitoHelper";
+
 import { CreateTaskInput, Task, UpdateTaskInput } from "../../API";
 import { useUserContext } from "../../contexts/UserContext";
 
@@ -14,7 +16,6 @@ type Props = {
 	onClose: () => void;
 	onCreate: (task: CreateTaskInput) => void;
 	onUpdate: (task: UpdateTaskInput) => void;
-	getEmailByCognitoID?: (cognitoID: string) => Promise<string | null | undefined>;
 };
 
 const style = {
@@ -28,7 +29,7 @@ const style = {
 	p: 3,
 };
 
-export default function TaskModal({ opened, projectID, userEmails, task, onClose, onCreate, onUpdate, getEmailByCognitoID }: Props) {
+export default function TaskModal({ opened, projectID, userEmails, task, onClose, onCreate, onUpdate }: Props) {
 	const { userID } = useUserContext();
 
 	const [title, setTitle] = useState<string>("");
@@ -53,7 +54,7 @@ export default function TaskModal({ opened, projectID, userEmails, task, onClose
 			setDescription(description || "");
 			setDeadline(moment(deadline));
 
-			if (user_id && getEmailByCognitoID) getEmailByCognitoID(user_id).then(email => email && setPerformer(email));
+			if (user_id) getEmailByCognitoID(user_id).then(email => email && setPerformer(email));
 		}
 	}, [task]);
 
