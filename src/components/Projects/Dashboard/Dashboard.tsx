@@ -164,9 +164,12 @@ export default function Dashboard({ project, onClose }: Props) {
 						/>
 					</Box>
 					<Box sx={{ flex: 4, borderRight: "2px solid #eeeeee", p: "20px", boxSizing: "border-box" }}>
-						{userID && project.manager_id !== userID && (
-							<TimeEntry tasks={tasks.filter(t => t.user_id === userID && t.project_id === project.id && !t._deleted)} />
-						)}
+						<TimeEntry
+							tasks={tasks.filter(
+								t => (project.manager_id !== userID ? t.user_id === userID : t.user_id) && t.project_id === project.id && !t._deleted
+							)}
+							isManager={project.manager_id === userID}
+						/>
 					</Box>
 					<Box sx={{ flex: userID === project.manager_id ? 2 : 1, width: "400px", p: "20px", boxSizing: "border-box" }}>
 						{userID === project.manager_id && (

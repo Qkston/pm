@@ -21,6 +21,8 @@ import PauseIcon from "@mui/icons-material/Pause";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import { getCorrectTaskStatus, getStatusColor } from "../../helpers/valueConverter";
+import { TimeEntryWithUserEmail } from "../../helpers/interfaces";
+import { getEmailByCognitoID } from "../../helpers/cognitoHelper";
 
 import TimeEntriesSubscription from "../../subscriptions/TimeEntrySubscription";
 
@@ -31,6 +33,7 @@ import { updateTaskRecord } from "../../services/TaskService";
 
 type Props = {
 	tasks: Task[];
+	isManager?: boolean;
 };
 
 type TimerType = {
@@ -39,13 +42,14 @@ type TimerType = {
 	s: number;
 };
 
-export default function TimeEntry({ tasks }: Props) {
+export default function TimeEntry({ tasks, isManager }: Props) {
 	const { userID } = useUserContext();
 
 	const timeEntries = TimeEntriesSubscription();
 
 	const [selectedTask, setSelectedTask] = useState<Task>();
 	const [selectedTimeEntry, setSelectedTimeEntry] = useState<TimeEntryAPI>();
+	const [timeEntriesWithUserEmails, setTimeEntriesWithUserEmails] = useState<TimeEntryWithUserEmail[]>([]);
 
 	const [timerValue, setTimerValue] = useState<TimerType>({ h: 0, m: 0, s: 0 });
 
@@ -53,16 +57,29 @@ export default function TimeEntry({ tasks }: Props) {
 	const [openConfirmDelete, setOpenConfirmDelete] = useState<boolean>(false);
 
 	useEffect(() => {
-		const uncompletedTask = tasks.find(({ id }) => timeEntries.some(te => !te.end && id === te.task_id && !te._deleted));
+		const getData = async () => {
+			const updatedTimeEntries: TimeEntryWithUserEmail[] = await Promise.all(
+				timeEntries.map(async te => {
+					const email = await getEmailByCognitoID(te.user_id);
+					return { ...te, userEmail: isManager && email ? email : "" };
+				})
+			);
+			setTimeEntriesWithUserEmails(updatedTimeEntries);
+		};
+		getData();
+	}, [timeEntries, isManager]);
+
+	useEffect(() => {
+		const uncompletedTask = tasks.find(({ id }) => timeEntriesWithUserEmails.some(te => !te.end && id === te.task_id && !te._deleted));
 
 		setSelectedTask(uncompletedTask);
 		setTimerOnStatus(!!uncompletedTask);
-	}, [tasks]);
+	}, [tasks, timeEntriesWithUserEmails]);
 
 	useEffect(() => {
 		const interval = setInterval(() => {
 			if (selectedTask && isTimerOn) {
-				const timeEntry = timeEntries.find(te => !te.end && selectedTask.id === te.task_id && !te._deleted);
+				const timeEntry = timeEntriesWithUserEmails.find(te => !te.end && selectedTask.id === te.task_id && !te._deleted);
 				if (!timeEntry) return;
 
 				const duration = moment.duration(moment(timeEntry.start).diff(moment()));
@@ -78,7 +95,7 @@ export default function TimeEntry({ tasks }: Props) {
 		return () => {
 			clearInterval(interval);
 		};
-	}, [isTimerOn, timeEntries]);
+	}, [isTimerOn, timeEntriesWithUserEmails]);
 
 	const onCreate = () => {
 		if (!selectedTask || !userID) return;
@@ -105,7 +122,7 @@ export default function TimeEntry({ tasks }: Props) {
 		updateTimeEntryRecord(data).then(() => setSelectedTask(undefined));
 	};
 
-	const getGroupingKey = (timeEntry: TimeEntryAPI) => {
+	const getGroupingKey = (timeEntry: TimeEntryWithUserEmail) => {
 		const start = moment(timeEntry.start).startOf("day");
 		const end = timeEntry.end ? moment(timeEntry.end).startOf("day") : null;
 
@@ -116,8 +133,8 @@ export default function TimeEntry({ tasks }: Props) {
 		return "Other";
 	};
 
-	const groupedTimeEntries: { entries: TimeEntryAPI[] } = timeEntries
-		.filter(te => te.end && userID === te.user_id && tasks.some(t => t.id === te.task_id) && !te._deleted)
+	const groupedTimeEntries: { entries: TimeEntryWithUserEmail[] } = timeEntriesWithUserEmails
+		.filter(te => te.end && tasks.some(t => t.id === te.task_id) && !te._deleted)
 		.sort((a, b) => moment(b.start).diff(a.start))
 		.reduce((groups: any, entry) => {
 			const key = getGroupingKey(entry);
@@ -130,58 +147,60 @@ export default function TimeEntry({ tasks }: Props) {
 
 	return (
 		<Box>
-			<Box sx={{ display: "flex", alignItems: "center", columnGap: "30px" }}>
-				<FormControl fullWidth variant="standard">
-					<InputLabel>Виберіть завдання для відстеження</InputLabel>
-					<Select
-						value={selectedTask?.id || ""}
-						onChange={(event: SelectChangeEvent) => {
-							if (isTimerOn) {
-								setTimerOnStatus(!isTimerOn);
-								onUpdate();
-							}
-							setSelectedTask(tasks.find(t => t.id === event.target.value) || (undefined as Task | undefined));
+			{!isManager && (
+				<Box sx={{ display: "flex", alignItems: "center", columnGap: "30px" }}>
+					<FormControl fullWidth variant="standard">
+						<InputLabel>Виберіть завдання для відстеження</InputLabel>
+						<Select
+							value={selectedTask?.id || ""}
+							onChange={(event: SelectChangeEvent) => {
+								if (isTimerOn) {
+									setTimerOnStatus(!isTimerOn);
+									onUpdate();
+								}
+								setSelectedTask(tasks.find(t => t.id === event.target.value) || (undefined as Task | undefined));
+							}}>
+							{tasks.map(t => {
+								return (
+									<MenuItem key={t.id} value={t.id}>
+										<span>{t.title}</span>
+										{t.id !== selectedTask?.id && (
+											<Box sx={{ background: getStatusColor(t.status), borderRadius: "20px", fontSize: "14px", ml: "10px", p: "0 10px" }}>
+												{getCorrectTaskStatus(t.status)}
+											</Box>
+										)}
+									</MenuItem>
+								);
+							})}
+						</Select>
+					</FormControl>
+					<Box>
+						<Typography fontSize={18}>{moment(timerValue).format("HH:mm:ss")}</Typography>
+					</Box>
+					<IconButton
+						disabled={!selectedTask}
+						onClick={() => {
+							setTimerOnStatus(!isTimerOn);
+							isTimerOn ? onUpdate() : onCreate();
+						}}
+						sx={{
+							width: "75px",
+							background: "#1976d2",
+							borderRadius: "4px",
+							":hover": { background: "#166abe" },
+							":disabled": { background: "#bdbdbd" },
 						}}>
-						{tasks.map(t => {
-							return (
-								<MenuItem key={t.id} value={t.id}>
-									<span>{t.title}</span>
-									{t.id !== selectedTask?.id && (
-										<Box sx={{ background: getStatusColor(t.status), borderRadius: "20px", fontSize: "14px", ml: "10px", p: "0 10px" }}>
-											{getCorrectTaskStatus(t.status)}
-										</Box>
-									)}
-								</MenuItem>
-							);
-						})}
-					</Select>
-				</FormControl>
-				<Box>
-					<Typography fontSize={18}>{moment(timerValue).format("HH:mm:ss")}</Typography>
+						{isTimerOn ? <PauseIcon sx={{ color: "#fff" }} /> : <PlayArrowIcon sx={{ color: "#fff" }} />}
+					</IconButton>
 				</Box>
-				<IconButton
-					disabled={!selectedTask}
-					onClick={() => {
-						setTimerOnStatus(!isTimerOn);
-						isTimerOn ? onUpdate() : onCreate();
-					}}
-					sx={{
-						width: "75px",
-						background: "#1976d2",
-						borderRadius: "4px",
-						":hover": { background: "#166abe" },
-						":disabled": { background: "#bdbdbd" },
-					}}>
-					{isTimerOn ? <PauseIcon sx={{ color: "#fff" }} /> : <PlayArrowIcon sx={{ color: "#fff" }} />}
-				</IconButton>
-			</Box>
+			)}
 			<Box sx={{ mt: "30px" }}>
 				{Object.entries(groupedTimeEntries).map(([day, entries]) => (
 					<Box key={day}>
 						<Typography component={"h5"} variant="h5" sx={{ mb: "10px" }}>
 							{day}
 						</Typography>
-						{entries.map((e: TimeEntryAPI) => {
+						{entries.map((e: TimeEntryWithUserEmail) => {
 							const task = tasks.find(t => t.id === e.task_id);
 							return (
 								<Box
@@ -195,6 +214,7 @@ export default function TimeEntry({ tasks }: Props) {
 										":hover": { background: "#efefef" },
 									}}>
 									{task && <Typography sx={{ flex: 4 }}>{task.title}</Typography>}
+									{isManager && <Typography sx={{ flex: 4 }}>{e.userEmail}</Typography>}
 									<Typography>{moment(e.start).format("HH:mm:ss")}</Typography>
 									<Typography>-</Typography>
 									<Typography>{moment(e.end).format("HH:mm:ss")}</Typography>
