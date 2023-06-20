@@ -11,12 +11,14 @@ export const getProject = /* GraphQL */ `
       start_date
       finish_date
       manager_id
+      teamlead_id
       participant_ids
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -34,15 +36,18 @@ export const listProjects = /* GraphQL */ `
         start_date
         finish_date
         manager_id
+        teamlead_id
         participant_ids
         createdAt
         updatedAt
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       nextToken
       startedAt
+      __typename
     }
   }
 `;
@@ -66,15 +71,18 @@ export const syncProjects = /* GraphQL */ `
         start_date
         finish_date
         manager_id
+        teamlead_id
         participant_ids
         createdAt
         updatedAt
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       nextToken
       startedAt
+      __typename
     }
   }
 `;
@@ -90,6 +98,7 @@ export const getUser = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -110,9 +119,11 @@ export const listUsers = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       nextToken
       startedAt
+      __typename
     }
   }
 `;
@@ -139,9 +150,11 @@ export const syncUsers = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       nextToken
       startedAt
+      __typename
     }
   }
 `;
@@ -154,6 +167,7 @@ export const getTask = /* GraphQL */ `
       status
       create_date
       deadline
+      complete_date
       project_id
       user_id
       createdAt
@@ -161,6 +175,7 @@ export const getTask = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -178,6 +193,7 @@ export const listTasks = /* GraphQL */ `
         status
         create_date
         deadline
+        complete_date
         project_id
         user_id
         createdAt
@@ -185,9 +201,11 @@ export const listTasks = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       nextToken
       startedAt
+      __typename
     }
   }
 `;
@@ -211,6 +229,7 @@ export const syncTasks = /* GraphQL */ `
         status
         create_date
         deadline
+        complete_date
         project_id
         user_id
         createdAt
@@ -218,9 +237,11 @@ export const syncTasks = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       nextToken
       startedAt
+      __typename
     }
   }
 `;
@@ -237,6 +258,7 @@ export const getTimeEntry = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -258,9 +280,11 @@ export const listTimeEntries = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       nextToken
       startedAt
+      __typename
     }
   }
 `;
@@ -288,9 +312,11 @@ export const syncTimeEntries = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       nextToken
       startedAt
+      __typename
     }
   }
 `;
@@ -306,6 +332,7 @@ export const getComment = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -326,9 +353,11 @@ export const listComments = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       nextToken
       startedAt
+      __typename
     }
   }
 `;
@@ -355,9 +384,11 @@ export const syncComments = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       nextToken
       startedAt
+      __typename
     }
   }
 `;
@@ -377,6 +408,7 @@ export const getReport = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -401,9 +433,11 @@ export const listReports = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       nextToken
       startedAt
+      __typename
     }
   }
 `;
@@ -434,9 +468,11 @@ export const syncReports = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       nextToken
       startedAt
+      __typename
     }
   }
 `;
@@ -462,6 +498,7 @@ export const tasksByProject_id = /* GraphQL */ `
         status
         create_date
         deadline
+        complete_date
         project_id
         user_id
         createdAt
@@ -469,9 +506,11 @@ export const tasksByProject_id = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       nextToken
       startedAt
+      __typename
     }
   }
 `;
@@ -501,9 +540,11 @@ export const timeEntriesByTask_id = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       nextToken
       startedAt
+      __typename
     }
   }
 `;
@@ -532,9 +573,11 @@ export const commentsByTask_id = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       nextToken
       startedAt
+      __typename
     }
   }
 `;
@@ -567,9 +610,11 @@ export const reportsByProject_id = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       nextToken
       startedAt
+      __typename
     }
   }
 `;
@@ -602,9 +647,11 @@ export const reportsByTask_id = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       nextToken
       startedAt
+      __typename
     }
   }
 `;

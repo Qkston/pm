@@ -4,8 +4,9 @@ type Project @model @auth(rules: [{ allow: public }]) {
 	description: String
 	start_date: AWSDate!
 	finish_date: AWSDate
-  manager_id: String! 
-  participant_ids: [String] 
+	manager_id: String!
+	teamlead_id: String
+	participant_ids: [String]
 }
 
 type User @model @auth(rules: [{ allow: public }]) {
@@ -22,6 +23,7 @@ type Task @model @auth(rules: [{ allow: public }]) {
 	status: String!
 	create_date: AWSDate!
 	deadline: AWSDate!
+	complete_date: AWSDate
 	project_id: ID! @index(name: "byProject")
 	user_id: String
 }

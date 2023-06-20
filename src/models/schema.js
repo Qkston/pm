@@ -45,6 +45,13 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "teamlead_id": {
+                    "name": "teamlead_id",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "participant_ids": {
                     "name": "participant_ids",
                     "isArray": true,
@@ -211,6 +218,13 @@ export const schema = {
                     "isArray": false,
                     "type": "AWSDate",
                     "isRequired": true,
+                    "attributes": []
+                },
+                "complete_date": {
+                    "name": "complete_date",
+                    "isArray": false,
+                    "type": "AWSDate",
+                    "isRequired": false,
                     "attributes": []
                 },
                 "project_id": {
@@ -571,6 +585,6 @@ export const schema = {
     },
     "enums": {},
     "nonModels": {},
-    "codegenVersion": "3.4.3",
-    "version": "dc46ab31ce829c21dfd2dab8fca089e0"
+    "codegenVersion": "3.4.4",
+    "version": "d60c70a9abacb689bc6c68420b97e677"
 };

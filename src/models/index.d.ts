@@ -17,6 +17,7 @@ type EagerProject = {
   readonly start_date: string;
   readonly finish_date?: string | null;
   readonly manager_id: string;
+  readonly teamlead_id?: string | null;
   readonly participant_ids?: (string | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -33,6 +34,7 @@ type LazyProject = {
   readonly start_date: string;
   readonly finish_date?: string | null;
   readonly manager_id: string;
+  readonly teamlead_id?: string | null;
   readonly participant_ids?: (string | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -87,6 +89,7 @@ type EagerTask = {
   readonly status: string;
   readonly create_date: string;
   readonly deadline: string;
+  readonly complete_date?: string | null;
   readonly project_id: string;
   readonly user_id?: string | null;
   readonly createdAt?: string | null;
@@ -104,6 +107,7 @@ type LazyTask = {
   readonly status: string;
   readonly create_date: string;
   readonly deadline: string;
+  readonly complete_date?: string | null;
   readonly project_id: string;
   readonly user_id?: string | null;
   readonly createdAt?: string | null;

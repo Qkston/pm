@@ -11,12 +11,14 @@ export const onCreateProject = /* GraphQL */ `
       start_date
       finish_date
       manager_id
+      teamlead_id
       participant_ids
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -29,12 +31,14 @@ export const onUpdateProject = /* GraphQL */ `
       start_date
       finish_date
       manager_id
+      teamlead_id
       participant_ids
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -47,12 +51,14 @@ export const onDeleteProject = /* GraphQL */ `
       start_date
       finish_date
       manager_id
+      teamlead_id
       participant_ids
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -68,6 +74,7 @@ export const onCreateUser = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -83,6 +90,7 @@ export const onUpdateUser = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -98,6 +106,7 @@ export const onDeleteUser = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -110,6 +119,7 @@ export const onCreateTask = /* GraphQL */ `
       status
       create_date
       deadline
+      complete_date
       project_id
       user_id
       createdAt
@@ -117,6 +127,7 @@ export const onCreateTask = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -129,6 +140,7 @@ export const onUpdateTask = /* GraphQL */ `
       status
       create_date
       deadline
+      complete_date
       project_id
       user_id
       createdAt
@@ -136,6 +148,7 @@ export const onUpdateTask = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -148,6 +161,7 @@ export const onDeleteTask = /* GraphQL */ `
       status
       create_date
       deadline
+      complete_date
       project_id
       user_id
       createdAt
@@ -155,6 +169,7 @@ export const onDeleteTask = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -173,6 +188,7 @@ export const onCreateTimeEntry = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -191,6 +207,7 @@ export const onUpdateTimeEntry = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -209,6 +226,7 @@ export const onDeleteTimeEntry = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -224,6 +242,7 @@ export const onCreateComment = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -239,6 +258,7 @@ export const onUpdateComment = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -254,6 +274,7 @@ export const onDeleteComment = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -273,6 +294,7 @@ export const onCreateReport = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -292,6 +314,7 @@ export const onUpdateReport = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -311,6 +334,7 @@ export const onDeleteReport = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;

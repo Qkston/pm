@@ -9,6 +9,7 @@ export type CreateProjectInput = {
   start_date: string,
   finish_date?: string | null,
   manager_id: string,
+  teamlead_id?: string | null,
   participant_ids?: Array< string | null > | null,
   _version?: number | null,
 };
@@ -19,10 +20,12 @@ export type ModelProjectConditionInput = {
   start_date?: ModelStringInput | null,
   finish_date?: ModelStringInput | null,
   manager_id?: ModelStringInput | null,
+  teamlead_id?: ModelStringInput | null,
   participant_ids?: ModelStringInput | null,
   and?: Array< ModelProjectConditionInput | null > | null,
   or?: Array< ModelProjectConditionInput | null > | null,
   not?: ModelProjectConditionInput | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelStringInput = {
@@ -65,6 +68,13 @@ export type ModelSizeInput = {
   between?: Array< number | null > | null,
 };
 
+export type ModelBooleanInput = {
+  ne?: boolean | null,
+  eq?: boolean | null,
+  attributeExists?: boolean | null,
+  attributeType?: ModelAttributeTypes | null,
+};
+
 export type Project = {
   __typename: "Project",
   id: string,
@@ -73,6 +83,7 @@ export type Project = {
   start_date: string,
   finish_date?: string | null,
   manager_id: string,
+  teamlead_id?: string | null,
   participant_ids?: Array< string | null > | null,
   createdAt: string,
   updatedAt: string,
@@ -88,6 +99,7 @@ export type UpdateProjectInput = {
   start_date?: string | null,
   finish_date?: string | null,
   manager_id?: string | null,
+  teamlead_id?: string | null,
   participant_ids?: Array< string | null > | null,
   _version?: number | null,
 };
@@ -112,6 +124,7 @@ export type ModelUserConditionInput = {
   and?: Array< ModelUserConditionInput | null > | null,
   or?: Array< ModelUserConditionInput | null > | null,
   not?: ModelUserConditionInput | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type User = {
@@ -147,6 +160,7 @@ export type CreateTaskInput = {
   status: string,
   create_date: string,
   deadline: string,
+  complete_date?: string | null,
   project_id: string,
   user_id?: string | null,
   _version?: number | null,
@@ -158,11 +172,13 @@ export type ModelTaskConditionInput = {
   status?: ModelStringInput | null,
   create_date?: ModelStringInput | null,
   deadline?: ModelStringInput | null,
+  complete_date?: ModelStringInput | null,
   project_id?: ModelIDInput | null,
   user_id?: ModelStringInput | null,
   and?: Array< ModelTaskConditionInput | null > | null,
   or?: Array< ModelTaskConditionInput | null > | null,
   not?: ModelTaskConditionInput | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelIDInput = {
@@ -189,6 +205,7 @@ export type Task = {
   status: string,
   create_date: string,
   deadline: string,
+  complete_date?: string | null,
   project_id: string,
   user_id?: string | null,
   createdAt: string,
@@ -205,6 +222,7 @@ export type UpdateTaskInput = {
   status?: string | null,
   create_date?: string | null,
   deadline?: string | null,
+  complete_date?: string | null,
   project_id?: string | null,
   user_id?: string | null,
   _version?: number | null,
@@ -232,6 +250,7 @@ export type ModelTimeEntryConditionInput = {
   and?: Array< ModelTimeEntryConditionInput | null > | null,
   or?: Array< ModelTimeEntryConditionInput | null > | null,
   not?: ModelTimeEntryConditionInput | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type TimeEntry = {
@@ -277,6 +296,7 @@ export type ModelCommentConditionInput = {
   and?: Array< ModelCommentConditionInput | null > | null,
   or?: Array< ModelCommentConditionInput | null > | null,
   not?: ModelCommentConditionInput | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type Comment = {
@@ -328,6 +348,7 @@ export type ModelReportConditionInput = {
   and?: Array< ModelReportConditionInput | null > | null,
   or?: Array< ModelReportConditionInput | null > | null,
   not?: ModelReportConditionInput | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelIntInput = {
@@ -383,10 +404,12 @@ export type ModelProjectFilterInput = {
   start_date?: ModelStringInput | null,
   finish_date?: ModelStringInput | null,
   manager_id?: ModelStringInput | null,
+  teamlead_id?: ModelStringInput | null,
   participant_ids?: ModelStringInput | null,
   and?: Array< ModelProjectFilterInput | null > | null,
   or?: Array< ModelProjectFilterInput | null > | null,
   not?: ModelProjectFilterInput | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelProjectConnection = {
@@ -404,6 +427,7 @@ export type ModelUserFilterInput = {
   and?: Array< ModelUserFilterInput | null > | null,
   or?: Array< ModelUserFilterInput | null > | null,
   not?: ModelUserFilterInput | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelUserConnection = {
@@ -420,11 +444,13 @@ export type ModelTaskFilterInput = {
   status?: ModelStringInput | null,
   create_date?: ModelStringInput | null,
   deadline?: ModelStringInput | null,
+  complete_date?: ModelStringInput | null,
   project_id?: ModelIDInput | null,
   user_id?: ModelStringInput | null,
   and?: Array< ModelTaskFilterInput | null > | null,
   or?: Array< ModelTaskFilterInput | null > | null,
   not?: ModelTaskFilterInput | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelTaskConnection = {
@@ -443,6 +469,7 @@ export type ModelTimeEntryFilterInput = {
   and?: Array< ModelTimeEntryFilterInput | null > | null,
   or?: Array< ModelTimeEntryFilterInput | null > | null,
   not?: ModelTimeEntryFilterInput | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelTimeEntryConnection = {
@@ -460,6 +487,7 @@ export type ModelCommentFilterInput = {
   and?: Array< ModelCommentFilterInput | null > | null,
   or?: Array< ModelCommentFilterInput | null > | null,
   not?: ModelCommentFilterInput | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelCommentConnection = {
@@ -481,6 +509,7 @@ export type ModelReportFilterInput = {
   and?: Array< ModelReportFilterInput | null > | null,
   or?: Array< ModelReportFilterInput | null > | null,
   not?: ModelReportFilterInput | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelReportConnection = {
@@ -503,9 +532,11 @@ export type ModelSubscriptionProjectFilterInput = {
   start_date?: ModelSubscriptionStringInput | null,
   finish_date?: ModelSubscriptionStringInput | null,
   manager_id?: ModelSubscriptionStringInput | null,
+  teamlead_id?: ModelSubscriptionStringInput | null,
   participant_ids?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionProjectFilterInput | null > | null,
   or?: Array< ModelSubscriptionProjectFilterInput | null > | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelSubscriptionIDInput = {
@@ -545,6 +576,7 @@ export type ModelSubscriptionUserFilterInput = {
   email?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionUserFilterInput | null > | null,
   or?: Array< ModelSubscriptionUserFilterInput | null > | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelSubscriptionTaskFilterInput = {
@@ -554,10 +586,12 @@ export type ModelSubscriptionTaskFilterInput = {
   status?: ModelSubscriptionStringInput | null,
   create_date?: ModelSubscriptionStringInput | null,
   deadline?: ModelSubscriptionStringInput | null,
+  complete_date?: ModelSubscriptionStringInput | null,
   project_id?: ModelSubscriptionIDInput | null,
   user_id?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionTaskFilterInput | null > | null,
   or?: Array< ModelSubscriptionTaskFilterInput | null > | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelSubscriptionTimeEntryFilterInput = {
@@ -568,6 +602,7 @@ export type ModelSubscriptionTimeEntryFilterInput = {
   end?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionTimeEntryFilterInput | null > | null,
   or?: Array< ModelSubscriptionTimeEntryFilterInput | null > | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelSubscriptionCommentFilterInput = {
@@ -577,6 +612,7 @@ export type ModelSubscriptionCommentFilterInput = {
   text?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionCommentFilterInput | null > | null,
   or?: Array< ModelSubscriptionCommentFilterInput | null > | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelSubscriptionReportFilterInput = {
@@ -590,6 +626,7 @@ export type ModelSubscriptionReportFilterInput = {
   user_id?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionReportFilterInput | null > | null,
   or?: Array< ModelSubscriptionReportFilterInput | null > | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelSubscriptionIntInput = {
@@ -618,6 +655,7 @@ export type CreateProjectMutation = {
     start_date: string,
     finish_date?: string | null,
     manager_id: string,
+    teamlead_id?: string | null,
     participant_ids?: Array< string | null > | null,
     createdAt: string,
     updatedAt: string,
@@ -641,6 +679,7 @@ export type UpdateProjectMutation = {
     start_date: string,
     finish_date?: string | null,
     manager_id: string,
+    teamlead_id?: string | null,
     participant_ids?: Array< string | null > | null,
     createdAt: string,
     updatedAt: string,
@@ -664,6 +703,7 @@ export type DeleteProjectMutation = {
     start_date: string,
     finish_date?: string | null,
     manager_id: string,
+    teamlead_id?: string | null,
     participant_ids?: Array< string | null > | null,
     createdAt: string,
     updatedAt: string,
@@ -747,6 +787,7 @@ export type CreateTaskMutation = {
     status: string,
     create_date: string,
     deadline: string,
+    complete_date?: string | null,
     project_id: string,
     user_id?: string | null,
     createdAt: string,
@@ -771,6 +812,7 @@ export type UpdateTaskMutation = {
     status: string,
     create_date: string,
     deadline: string,
+    complete_date?: string | null,
     project_id: string,
     user_id?: string | null,
     createdAt: string,
@@ -795,6 +837,7 @@ export type DeleteTaskMutation = {
     status: string,
     create_date: string,
     deadline: string,
+    complete_date?: string | null,
     project_id: string,
     user_id?: string | null,
     createdAt: string,
@@ -1013,6 +1056,7 @@ export type GetProjectQuery = {
     start_date: string,
     finish_date?: string | null,
     manager_id: string,
+    teamlead_id?: string | null,
     participant_ids?: Array< string | null > | null,
     createdAt: string,
     updatedAt: string,
@@ -1039,6 +1083,7 @@ export type ListProjectsQuery = {
       start_date: string,
       finish_date?: string | null,
       manager_id: string,
+      teamlead_id?: string | null,
       participant_ids?: Array< string | null > | null,
       createdAt: string,
       updatedAt: string,
@@ -1069,6 +1114,7 @@ export type SyncProjectsQuery = {
       start_date: string,
       finish_date?: string | null,
       manager_id: string,
+      teamlead_id?: string | null,
       participant_ids?: Array< string | null > | null,
       createdAt: string,
       updatedAt: string,
@@ -1166,6 +1212,7 @@ export type GetTaskQuery = {
     status: string,
     create_date: string,
     deadline: string,
+    complete_date?: string | null,
     project_id: string,
     user_id?: string | null,
     createdAt: string,
@@ -1193,6 +1240,7 @@ export type ListTasksQuery = {
       status: string,
       create_date: string,
       deadline: string,
+      complete_date?: string | null,
       project_id: string,
       user_id?: string | null,
       createdAt: string,
@@ -1224,6 +1272,7 @@ export type SyncTasksQuery = {
       status: string,
       create_date: string,
       deadline: string,
+      complete_date?: string | null,
       project_id: string,
       user_id?: string | null,
       createdAt: string,
@@ -1487,6 +1536,7 @@ export type TasksByProject_idQuery = {
       status: string,
       create_date: string,
       deadline: string,
+      complete_date?: string | null,
       project_id: string,
       user_id?: string | null,
       createdAt: string,
@@ -1634,6 +1684,7 @@ export type OnCreateProjectSubscription = {
     start_date: string,
     finish_date?: string | null,
     manager_id: string,
+    teamlead_id?: string | null,
     participant_ids?: Array< string | null > | null,
     createdAt: string,
     updatedAt: string,
@@ -1656,6 +1707,7 @@ export type OnUpdateProjectSubscription = {
     start_date: string,
     finish_date?: string | null,
     manager_id: string,
+    teamlead_id?: string | null,
     participant_ids?: Array< string | null > | null,
     createdAt: string,
     updatedAt: string,
@@ -1678,6 +1730,7 @@ export type OnDeleteProjectSubscription = {
     start_date: string,
     finish_date?: string | null,
     manager_id: string,
+    teamlead_id?: string | null,
     participant_ids?: Array< string | null > | null,
     createdAt: string,
     updatedAt: string,
@@ -1757,6 +1810,7 @@ export type OnCreateTaskSubscription = {
     status: string,
     create_date: string,
     deadline: string,
+    complete_date?: string | null,
     project_id: string,
     user_id?: string | null,
     createdAt: string,
@@ -1780,6 +1834,7 @@ export type OnUpdateTaskSubscription = {
     status: string,
     create_date: string,
     deadline: string,
+    complete_date?: string | null,
     project_id: string,
     user_id?: string | null,
     createdAt: string,
@@ -1803,6 +1858,7 @@ export type OnDeleteTaskSubscription = {
     status: string,
     create_date: string,
     deadline: string,
+    complete_date?: string | null,
     project_id: string,
     user_id?: string | null,
     createdAt: string,

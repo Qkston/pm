@@ -131,7 +131,7 @@ export default function TaskTable({ tasks, project, onUpdate, onDelete, setOpenT
 						onClick={() => {
 							if (!selectedTask) return;
 							const { id, _version } = selectedTask;
-							onUpdate({ id, status: "DONE", _version });
+							onUpdate({ id, status: "DONE", complete_date: moment().format("YYYY-MM-DD"), _version });
 							closeMenu();
 						}}>
 						Завершено

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CognitoIdentityServiceProvider, config } from "aws-sdk";
 import {
 	Dialog,
@@ -26,6 +26,7 @@ import ParticipantListItem from "./ParticipantListItem";
 import TaskModal from "../../Tasks/TaskModal";
 import TaskTable from "../../Tasks/Table/Table";
 import TimeEntry from "../../TimeEntry/TimeEntry";
+import Reports from "../../Reports/Reports";
 import { getCorrectTaskStatus } from "../../../helpers/valueConverter";
 import { getCognitoIDByEmail } from "../../../helpers/cognitoHelper";
 
@@ -48,6 +49,7 @@ export default function Dashboard({ project, onClose }: Props) {
 
 	const [openAddUserInput, setOpenAddUserInputStatus] = useState<boolean>(false);
 	const [openTaskModal, setOpenTaskModalStatus] = useState<boolean>(false);
+	const [openReportsPage, setOpenReportsPageStatus] = useState<boolean>(false);
 
 	const [selectedTask, setSelectedTask] = useState<Task>();
 
@@ -110,123 +112,138 @@ export default function Dashboard({ project, onClose }: Props) {
 			<Dialog fullScreen open sx={{ mt: "88px" }} BackdropProps={{ style: { display: "none" } }}>
 				<AppBar sx={{ position: "relative" }}>
 					<Toolbar sx={{ display: "flex", alignItems: "center" }}>
-						<IconButton color="inherit" onClick={onClose}>
+						<IconButton color="inherit" onClick={() => (openReportsPage ? setOpenReportsPageStatus(false) : onClose())}>
 							<ArrowBackIosNewIcon />
 						</IconButton>
 						<DialogTitle>{project.name}</DialogTitle>
-					</Toolbar>
-				</AppBar>
-				<DialogContent sx={{ display: "flex", p: 0 }}>
-					<Box sx={{ flex: userID === project.manager_id ? 4 : 2, borderRight: "2px solid #eeeeee", p: "20px", boxSizing: "border-box" }}>
-						<Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-							{userID === project.manager_id && (
-								<Button variant="outlined" size="large" onClick={() => setOpenTaskModalStatus(true)}>
-									Створити завдання
-								</Button>
-							)}
-							<FormControl sx={{ width: "300px" }} variant="standard">
-								<InputLabel>Статус</InputLabel>
-								<Select
-									value={filterStatus}
-									onChange={(event: SelectChangeEvent) => {
-										setFilterStatus(event.target.value as string);
-									}}
-									endAdornment={
-										<IconButton sx={{ visibility: filterStatus ? "visible" : "hidden" }} onClick={() => setFilterStatus("")}>
-											<ClearIcon />
-										</IconButton>
-									}
-									sx={{
-										"& .MuiSelect-iconStandard": { display: filterStatus ? "none" : "" },
-										"&.Mui-focused .MuiIconButton-root": { color: "primary.main" },
-									}}>
-									{["NEW", "INPROGRESS", "DONE"].map(status => (
-										<MenuItem key={status} value={status}>
-											{getCorrectTaskStatus(status)}
-										</MenuItem>
-									))}
-								</Select>
-							</FormControl>
-						</Box>
-						<TaskTable
-							tasks={tasks.filter(
-								({ status, user_id, project_id, _deleted }) =>
-									(!filterStatus || status === filterStatus) &&
-									(userID === project.manager_id || user_id === userID) &&
-									project_id === project.id &&
-									!_deleted
-							)}
-							project={project}
-							onUpdate={updateTaskRecord}
-							onDelete={deleteTaskRecord}
-							setOpenTaskModalStatus={setOpenTaskModalStatus}
-							setEditingTask={setSelectedTask}
-						/>
-					</Box>
-					<Box sx={{ flex: 4, borderRight: "2px solid #eeeeee", p: "20px", boxSizing: "border-box" }}>
-						<TimeEntry
-							tasks={tasks.filter(
-								t => (project.manager_id !== userID ? t.user_id === userID : t.user_id) && t.project_id === project.id && !t._deleted
-							)}
-							isManager={project.manager_id === userID}
-						/>
-					</Box>
-					<Box sx={{ flex: userID === project.manager_id ? 2 : 1, width: "400px", p: "20px", boxSizing: "border-box" }}>
-						{userID === project.manager_id && (
+						{!openReportsPage && userID === project.manager_id && (
 							<Button
 								variant="outlined"
 								size="large"
-								sx={{ display: openAddUserInput ? "none" : "block", m: "0 auto", height: "50px" }}
-								onClick={() => setOpenAddUserInputStatus(true)}>
-								Додати учасника
+								sx={{ color: "#fff", borderColor: "#fff" }}
+								onClick={() => setOpenReportsPageStatus(true)}>
+								Звітність
 							</Button>
 						)}
-						<Box
-							sx={{
-								display: openAddUserInput ? "flex" : "none",
-								alignItems: "center",
-								columnGap: "10px",
-							}}>
-							<TextField
-								value={email}
-								onChange={(event: any) => setEmail(event.target.value)}
-								sx={{ flex: 3 }}
-								placeholder="Електронна пошта користувача"
-								variant="outlined"
-							/>
-							<Box sx={{ flex: 1 }}>
-								<IconButton
-									onClick={async () => {
-										const cognitoID = await getCognitoIDByEmail(email);
-										if (cognitoID) addNewParticipant(cognitoID);
-									}}>
-									<AddOutlinedIcon />
-								</IconButton>
-								<IconButton
-									onClick={() => {
-										setOpenAddUserInputStatus(false);
-										setEmail("");
-									}}>
-									<CloseIcon />
-								</IconButton>
+					</Toolbar>
+				</AppBar>
+				<DialogContent sx={{ display: "flex", p: 0 }}>
+					{openReportsPage ? (
+						<Reports project={project} tasks={tasks.filter(t => t.project_id === project.id && !t._deleted)} />
+					) : (
+						<React.Fragment>
+							<Box sx={{ flex: userID === project.manager_id ? 4 : 2, borderRight: "2px solid #eeeeee", p: "20px", boxSizing: "border-box" }}>
+								<Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+									{userID === project.manager_id && (
+										<Button variant="outlined" size="large" onClick={() => setOpenTaskModalStatus(true)}>
+											Створити завдання
+										</Button>
+									)}
+									<FormControl sx={{ width: "300px" }} variant="standard">
+										<InputLabel>Статус</InputLabel>
+										<Select
+											value={filterStatus}
+											onChange={(event: SelectChangeEvent) => {
+												setFilterStatus(event.target.value as string);
+											}}
+											endAdornment={
+												<IconButton sx={{ visibility: filterStatus ? "visible" : "hidden" }} onClick={() => setFilterStatus("")}>
+													<ClearIcon />
+												</IconButton>
+											}
+											sx={{
+												"& .MuiSelect-iconStandard": { display: filterStatus ? "none" : "" },
+												"&.Mui-focused .MuiIconButton-root": { color: "primary.main" },
+											}}>
+											{["NEW", "INPROGRESS", "DONE"].map(status => (
+												<MenuItem key={status} value={status}>
+													{getCorrectTaskStatus(status)}
+												</MenuItem>
+											))}
+										</Select>
+									</FormControl>
+								</Box>
+								<TaskTable
+									tasks={tasks.filter(
+										({ status, user_id, project_id, _deleted }) =>
+											(!filterStatus || status === filterStatus) &&
+											(userID === project.manager_id || user_id === userID) &&
+											project_id === project.id &&
+											!_deleted
+									)}
+									project={project}
+									onUpdate={updateTaskRecord}
+									onDelete={deleteTaskRecord}
+									setOpenTaskModalStatus={setOpenTaskModalStatus}
+									setEditingTask={setSelectedTask}
+								/>
 							</Box>
-						</Box>
-						<List sx={{ mt: "20px" }}>
-							{userEmails
-								.sort((a, b) => a.localeCompare(b))
-								.map(email => (
-									<ParticipantListItem
-										key={email}
-										email={email}
-										showRemove={project.manager_id === userID}
-										removeParticipant={async (email: string) => {
-											const cognitoID = await getCognitoIDByEmail(email);
-											if (cognitoID) removeParticipant(cognitoID);
-										}}
+							<Box sx={{ flex: 4, borderRight: "2px solid #eeeeee", p: "20px", boxSizing: "border-box" }}>
+								<TimeEntry
+									tasks={tasks.filter(
+										t => (project.manager_id !== userID ? t.user_id === userID : t.user_id) && t.project_id === project.id && !t._deleted
+									)}
+									isManager={project.manager_id === userID}
+								/>
+							</Box>
+							<Box sx={{ flex: userID === project.manager_id ? 2 : 1, width: "400px", p: "20px", boxSizing: "border-box" }}>
+								{userID === project.manager_id && (
+									<Button
+										variant="outlined"
+										size="large"
+										sx={{ display: openAddUserInput ? "none" : "block", m: "0 auto", height: "50px" }}
+										onClick={() => setOpenAddUserInputStatus(true)}>
+										Додати учасника
+									</Button>
+								)}
+								<Box
+									sx={{
+										display: openAddUserInput ? "flex" : "none",
+										alignItems: "center",
+										columnGap: "10px",
+									}}>
+									<TextField
+										value={email}
+										onChange={(event: any) => setEmail(event.target.value)}
+										sx={{ flex: 3 }}
+										placeholder="Електронна пошта користувача"
+										variant="outlined"
 									/>
-								))}
-						</List>
-					</Box>
+									<Box sx={{ flex: 1 }}>
+										<IconButton
+											onClick={async () => {
+												const cognitoID = await getCognitoIDByEmail(email);
+												if (cognitoID) addNewParticipant(cognitoID);
+											}}>
+											<AddOutlinedIcon />
+										</IconButton>
+										<IconButton
+											onClick={() => {
+												setOpenAddUserInputStatus(false);
+												setEmail("");
+											}}>
+											<CloseIcon />
+										</IconButton>
+									</Box>
+								</Box>
+								<List sx={{ mt: "20px" }}>
+									{userEmails
+										.sort((a, b) => a.localeCompare(b))
+										.map(email => (
+											<ParticipantListItem
+												key={email}
+												email={email}
+												showRemove={project.manager_id === userID}
+												removeParticipant={async (email: string) => {
+													const cognitoID = await getCognitoIDByEmail(email);
+													if (cognitoID) removeParticipant(cognitoID);
+												}}
+											/>
+										))}
+								</List>
+							</Box>
+						</React.Fragment>
+					)}
 				</DialogContent>
 			</Dialog>
 			<TaskModal
